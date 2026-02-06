@@ -1,0 +1,15 @@
+INSERT INTO unidades (codigo, nombre, nombre_corto, siglas, color_principal, color_secundario, direccion, telefono, email, sede_id) VALUES
+('UCCSJ', 'San Juan - Universidad Católica de Cuyo', 'UCCuyoSJ', 'UCCSJ', '#064a31', '#7d1b1c', 'Av. Ignacio de la Roza 1516 Oeste, J5400 Rivadavia, San Juan', '+54 264 4292300', 'secretariaacademica@uccuyo.edu.ar', 1),
+('UCCSL', 'San Luis - Universidad Católica de Cuyo', 'UCCuyoSL', 'UCCSL', '#064a31', '#7d1b1c', 'Felipe Velázquez 471, D5700 San Luis', '+54 266 4423572', 'sec.extension@uccuyosl.edu.ar', 2),
+('UCCMZ', 'Mendoza - Universidad Católica de Cuyo', 'UCCuyoMZ', 'UCCMZ', '#064a31', '#7d1b1c', 'Ruta Provincial 50, M5529 Rodeo del Medio, Mendoza', '+54 261 4951120', 'enologia@uccuyo.edu.ar', 3),
+('FCEE', 'Facultad de Ciencias Económicas', 'Ciencias Económicas', 'FCEE', '#1B3B82', '#4A90E2', 'Av. Ignacio de la Roza 1516 Oeste, J5400 Rivadavia, San Juan', '+54 264 4292323', 'fcee@uccuyo.edu.ar', 1),
+('FDCS', 'Facultad de Derecho y Ciencias Sociales', 'Derecho y Cs. Sociales', 'FDCS', '#691D18', '#795548', 'Av. Ignacio de la Roza 1516 Oeste, J5400 Rivadavia, San Juan', '+54 264 4292335', 'fdcs@uccuyo.edu.ar', 1),
+('FCM', 'Facultad de Ciencias Médicas', 'Ciencias Médicas', 'FCM', '#436600', '#4CAF50', 'Av. Ignacio de la Roza 1516 Oeste, J5400 Rivadavia, San Juan', '+54 264 4292361', 'fcm@uccuyo.edu.ar', 1),
+('FFYH', 'Facultad de Filosofía y Humanidades', 'Filosofía y Humanidades', 'FFYH', '#BF2C22', '#F44336', 'Av. Ignacio de la Roza 1516 Oeste, J5400 Rivadavia, San Juan', '+54 264 4292344', 'ffyh@uccuyo.edu.ar', 1),
+('FCQT', 'Facultad de Ciencias Químicas y Tecnológicas', 'Cs. Químicas y Tecnológicas', 'FCQT', '#00858A', '#00BCD4', 'Av. Ignacio de la Roza 1516 Oeste, J5400 Rivadavia, San Juan', '+54 264 4292357', 'fcqt@uccuyo.edu.ar', 1),
+('ISFDSM', 'Instituto Superior Santa María', 'Santa María', 'ISFDSM', '#8286D5', '#9C27B0', 'Av. Ignacio de la Roza 1516 Oeste, J5400 Rivadavia, San Juan', '+54 264 4292300', 'isfdsm@uccuyo.edu.ar', 1),
+('FE', 'Facultad de Educación', 'Educación', 'FE', '#E7117E', '#E91E63', 'Av. Ignacio de la Roza 1516 Oeste, J5400 Rivadavia, San Juan', '+54 264 4292347', 'fe@uccuyo.edu.ar', 1),
+('ES', 'Escuela de Seguridad', 'Seguridad', 'ES', '#021233', '#2196F3', 'Av. Ignacio de la Roza 1516 Oeste, J5400 Rivadavia, San Juan', '+54 264 4231534', 'es@uccuyo.edu.ar', 1),
+('ECRP', 'Escuela de Cultura Religiosa y Pastoral', 'Cultura Religiosa', 'ECRP', '#034A31', '#4CAF50', 'Av. Ignacio de la Roza 1516 Oeste, J5400 Rivadavia, San Juan', '+54 264 4292329', 'ecrp@uccuyo.edu.ar', 1),
+('FCV', 'Facultad de Ciencias Veterinarias', 'Ciencias Veterinarias', 'FCV', '#5107B4', '#7C4DFF', 'Felipe Velázquez 471, D5700 San Luis', '+54 266 4423572', 'fcv@uccuyosl.edu.ar', 2),
+('FDBEYCA', 'Facultad de Enología y Alimentación', 'Enología y Alimentación', 'FDBEYCA', '#CA1F32', '#FF5252', 'Ruta Provincial 50, M5529 Rodeo del Medio, Mendoza', '+54 261 4951120', 'enologia@uccuyo.edu.ar', 3);

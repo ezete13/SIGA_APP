@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Certificado de Reconocimiento</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+  <div class="certificado">
+    <img src="{{ logos.marco_izq }}" class="marco izquierda">
+    <img src="{{ logos.marco_der }}" class="marco derecha">
+
+
+    <header class="encabezado">
+      <div class="logos">
+        <div class="universidad">
+          <img src="{{ logos.principal }}">
+        </div>
+      </div>
+    </header>
+
+    <main class="contenido">
+      <h1>CERTIFICADO</h1>
+      <h2>DE RECONOCIMIENTO A:</h2>
+      <h3>{{ alumno }}</h3>
+      <p class="texto">
+        Por su participación en calidad de <strong>{{ participacion }}</strong> en {{ actividad }}<br>
+        Actividad aprobada por {{ resolucion }}.
+      </p>
+
+      <p class="fecha">
+        <strong>Se expide a los</strong> {{ dia }} <strong>días del mes de {{ mes }} del año {{ anio }}</strong>
+      </p>
+    </main>
+
+    <footer class="firmas">
+      {% for f in firmas %}
+        <div class="firma">
+          <div class="linea"></div>
+          <p class="nombre">{{ f.nombre }}</p>
+        </div>
+      {% endfor %}
+    </footer>
+  </div>
+</body>
+
+</html>

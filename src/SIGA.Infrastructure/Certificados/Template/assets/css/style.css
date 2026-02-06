@@ -1,0 +1,274 @@
+@font-face {
+  font-family: 'Montserrat';
+  src: url('fonts/Montserrat-Thin.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('fonts/Montserrat-ThinItalic.ttf') format('truetype');
+  font-weight: 100;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('fonts/Montserrat-ExtraLight.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('fonts/Montserrat-ExtraLightItalic.ttf') format('truetype');
+  font-weight: 200;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('fonts/Montserrat-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('fonts/Montserrat-LightItalic.ttf') format('truetype');
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('fonts/Montserrat-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('fonts/Montserrat-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('fonts/Montserrat-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('fonts/Montserrat-MediumItalic.ttf') format('truetype');
+  font-weight: 500;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('fonts/Montserrat-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('fonts/Montserrat-SemiBoldItalic.ttf') format('truetype');
+  font-weight: 600;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('fonts/Montserrat-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('fonts/Montserrat-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('fonts/Montserrat-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('fonts/Montserrat-ExtraBoldItalic.ttf') format('truetype');
+  font-weight: 800;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('fonts/Montserrat-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('fonts/Montserrat-BlackItalic.ttf') format('truetype');
+  font-weight: 900;
+  font-style: italic;
+}
+
+@page {
+    size: A4 landscape;
+    margin: 0;
+}
+
+body {
+    font-family: 'Montserrat', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    width: 297mm;  /* Ancho A4 horizontal */
+    height: 210mm; /* Alto A4 horizontal */
+      -weasyprint-font-smoothing: auto; /* Controlar suavizado */
+  text-rendering: geometricPrecision; /* Mejor para PDF */
+}
+
+.certificado {
+    width: 297mm;   /* 29.7cm = A4 ancho */
+    height: 210mm;  /* 21cm = A4 alto */
+    margin: 0;
+    padding: 15mm 20mm; /* Ajusta según necesites */
+    box-sizing: border-box;
+}
+
+
+/****** MARCOS LATERALES ******/
+.marco {
+  position: absolute;
+  opacity: 0.9;
+}
+
+.marco.izquierda {
+  left: 0;
+  top: 0;
+  height: 45%;
+}
+
+.marco.derecha {
+  right: 0;
+  bottom: 0;
+  /* Cambia top por bottom */
+  height: 35%;
+  /* O el porcentaje que necesites */
+}
+
+
+
+/* Encabezado */
+.encabezado {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.logos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 60px;
+}
+
+.escuela p {
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.universidad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.universidad img {
+  width: 500px;
+  margin-bottom: 0px;
+}
+
+.universidad p {
+  text-align: center;
+  font-size: 17px;
+}
+
+.universidad span {
+  font-style: italic;
+  font-size: 15px;
+  color: #444;
+}
+
+/* Contenido central */
+.contenido {
+  text-align: center;
+  margin-top: 20px;
+}
+
+h1 {
+  font-weight: 300;
+  font-size: 60px;
+  letter-spacing: 8px;
+  margin-bottom: 0px;
+}
+
+h2 {
+  font-weight: 300;
+  font-size: 28px;
+  letter-spacing: 8px;
+  /*color: #555;*/
+  margin-top: 0px;
+}
+
+h3 {
+  font-weight: 600;
+  font-size: 30px;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.texto {
+  font-size: 18px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.fecha {
+  font-size: 18px;
+  margin-top: 5px;
+}
+
+/* Firmas */
+.firmas {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 80px;
+  padding: 0 60px;
+}
+
+.firma {
+  text-align: center;
+  width: 40%;
+}
+
+.firma .linea {
+  border-top: 1.5px solid black;
+  margin-bottom: 4px;
+}
+
+.nombre {
+  font-size: 16px;
+  line-height: 1.3;
+}

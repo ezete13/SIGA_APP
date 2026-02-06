@@ -1,0 +1,35 @@
+# Binarios
+**/bin/
+**/obj/
+*.exe
+*.dll
+*.pdb
+*.cache
+
+# Entorno
+.env
+*.user
+*.suo
+
+# VS Code
+# .vscode/launch.json
+#.vscode/tasks.json
+
+# Archivos de proyecto
+*.userprefs
+*.csproj.user
+
+# Resultados de tests
+**/TestResults/
+
+# Archivos temporales
+*.log
+*.tmp
+*.temp
+
+# Archivos de publicación
+publish/
+
+# Otros
+.DS_Store
+Thumbs.db
