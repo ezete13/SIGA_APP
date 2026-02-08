@@ -22,12 +22,9 @@ public partial class Unidad
 
     public string? Email { get; set; }
 
-    public bool Estado { get; set; } = true;
+    public bool Activo { get; set; } = true;
 
     public virtual ICollection<Autoridad> Autoridades { get; set; } = new List<Autoridad>();
 
     public virtual ICollection<Propuesta> Propuestas { get; set; } = new List<Propuesta>();
-
-    public virtual ICollection<UsuarioPermisoUnidad> UsuarioPermisosUnidade { get; set; } =
-        new List<UsuarioPermisoUnidad>();
 }

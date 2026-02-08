@@ -1,18 +1,23 @@
 ﻿using System.Reflection;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SIGA.Domain.Entities;
 
 namespace SIGA.Persistence;
 
-public partial class ApplicationDbContext : DbContext
+public partial class ApplicationDbContext : IdentityDbContext<Usuario>
 {
     public ApplicationDbContext() { }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options) { }
 
-    public virtual DbSet<Auspiciante> Auspiciantes { get; set; }
+    public virtual DbSet<Unidad> Unidades { get; set; }
+    public virtual DbSet<Usuario> Usuarios { get; set; }
+    
+    /*
     public virtual DbSet<Autoridad> Autoridades { get; set; }
+    
     public virtual DbSet<CertificacionAutoridad> CertificacionAutoridad { get; set; }
     public virtual DbSet<Certificaciones> Certificaciones { get; set; }
     public virtual DbSet<Docentes> Docentes { get; set; }
@@ -43,9 +48,9 @@ public partial class ApplicationDbContext : DbContext
     public virtual DbSet<TiposEstadoInscripcion> TiposEstadoInscripcion { get; set; }
     public virtual DbSet<TiposEstadoPropuesta> TiposEstadoPropuesta { get; set; }
     public virtual DbSet<TiposPropuesta> TiposPropuesta { get; set; }
-    public virtual DbSet<Unidades> Unidades { get; set; }
+    
     public virtual DbSet<UsuarioPermisosUnidad> UsuarioPermisosUnidad { get; set; }
-    public virtual DbSet<Usuario> Usuarios { get; set; }
+    */
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

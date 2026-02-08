@@ -1,0 +1,39 @@
+@startuml
+!theme reddress-darkblue
+
+package "Modulo Core" {
+
+
+class Unidad {
+    +Id : int
+    +Codigo : string
+    +Nombre : string
+    +NombreCorto : string
+    +Siglas : string
+    +ColorPrincipal
+    +ColorSecundario
+    +Direccion
+    +Telefono
+    +Email
+    +Activo : bool
+    
+    -- Colecciones --
+    +Propuestas
+    +Autoridades
+}
+
+
+
+}
+
+
+
+
+@enduml
+
+
+
+
+
+
+

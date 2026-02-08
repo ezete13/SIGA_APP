@@ -8,9 +8,13 @@ public class Alumno
 
     public required int TipoDocumentoId { get; set; }
 
+    public virtual required TipoDocumento TipoDocumento { get; set; }
+
     public required int EstadoAlumnoId { get; set; }
 
-    public required string Documento { get; set; }
+    public virtual required EstadoAlumno EstadoAlumno { get; set; }
+
+    public required string NumDocumento { get; set; }
 
     public required string Apellido { get; set; }
 
@@ -51,10 +55,6 @@ public class Alumno
     public DateTime CreadoEn { get; set; } = DateTime.UtcNow;
 
     public DateTime? ActualizadoEn { get; set; }
-
-    public virtual required TipoDocumento TipoDocumento { get; set; }
-
-    public virtual required EstadoAlumno EstadoAlumno { get; set; }
 
     public virtual ICollection<Certificado> Certificados { get; set; } = new List<Certificado>();
 
