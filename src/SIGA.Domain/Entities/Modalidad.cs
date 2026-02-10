@@ -1,6 +1,6 @@
 ﻿namespace SIGA.Domain.Entities;
 
-public partial class PeriodoLectivo
+public partial class Modalidad
 {
     public int Id { get; set; }
 
@@ -10,13 +10,7 @@ public partial class PeriodoLectivo
 
     public required string? Descripcion { get; set; }
 
-    public DateOnly FechaInicio { get; set; }
-
-    public DateOnly FechaFin { get; set; }
-
-    public bool Estado { get; set; } = true;
-
-    public virtual ICollection<Autoridad> Autoridades { get; set; } = new List<Autoridad>();
+    public bool Activo { get; set; } = true;
 
     public virtual ICollection<Propuesta> Propuestas { get; set; } = new List<Propuesta>();
 }

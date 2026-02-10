@@ -20,10 +20,10 @@ public partial class Autoridad
 
     public required DateTime? ActualizadoEn { get; set; }
 
-    public virtual ICollection<CertificadoAutoridad> CertificadoAutoridades { get; set; } =
-        new List<CertificadoAutoridad>();
-
     public virtual required PeriodoLectivo PeriodoLectivo { get; set; }
 
     public virtual required Unidad Unidad { get; set; }
+
+    public virtual ICollection<CertificadoAutoridad> CertificadoAutoridades { get; set; } =
+        new List<CertificadoAutoridad>();
 }

@@ -10,7 +10,7 @@ public partial class EstadoInscripcion
 
     public string? Descripcion { get; set; }
 
-    public bool Estado { get; set; } = true;
+    public bool Activo { get; set; } = true;
 
     public virtual ICollection<Inscripcion> Inscripciones { get; set; } = new List<Inscripcion>();
 }

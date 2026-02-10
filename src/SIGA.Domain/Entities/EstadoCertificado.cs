@@ -1,6 +1,6 @@
 ﻿namespace SIGA.Domain.Entities;
 
-public partial class EstadoPreinscripcion
+public partial class EstadoCertificado
 {
     public int Id { get; set; }
 
@@ -10,8 +10,7 @@ public partial class EstadoPreinscripcion
 
     public string? Descripcion { get; set; }
 
-    public bool Estado { get; set; } = true;
+    public bool Activo { get; set; } = true;
 
-    public virtual ICollection<Preinscripcion> Preinscripciones { get; set; } =
-        new List<Preinscripcion>();
+    public virtual ICollection<Certificado> Certificado { get; set; } = new List<Certificado>();
 }

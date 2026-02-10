@@ -5,9 +5,9 @@ using SIGA.Domain.Entities;
 
 namespace SIGA.Persistence.Configurations;
 
-public class PeriodosLectivosConfiguration : IEntityTypeConfiguration<PeriodosLectivos>
+public class PeriodoLectivoConfiguration : IEntityTypeConfiguration<PeriodoLectivo>
 {
-    public void Configure(EntityTypeBuilder<PeriodosLectivos> builder)
+    public void Configure(EntityTypeBuilder<PeriodoLectivo> builder)
     {
         builder.HasKey(e => e.Id).HasName("periodos_lectivos_pkey");
 
@@ -52,57 +52,34 @@ public class PeriodosLectivosConfiguration : IEntityTypeConfiguration<PeriodosLe
             .HasComment("Fecha de finalización del ciclo lectivo.");
 
         builder
-            .Property(e => e.Estado)
-            .HasColumnName("estado")
+            .Property(e => e.Activo)
+            .HasColumnName("activo")
             .HasDefaultValue(true)
             .IsRequired(false) // Nullable
             .HasComment("Estado activo/inactivo (true=activo, false=inactivo).");
 
-        builder
-            .Property(e => e.CreadoEn)
-            .HasColumnName("creado_en")
-            .HasColumnType("timestamp without time zone")
-            .HasDefaultValueSql("CURRENT_TIMESTAMP")
-            .IsRequired(false) // Nullable
-            .HasComment("Fecha y hora de creación del registro.");
-
-        builder
-            .Property(e => e.ActualizadoEn)
-            .HasColumnName("actualizado_en")
-            .HasColumnType("timestamp without time zone")
-            .HasDefaultValueSql("CURRENT_TIMESTAMP")
-            .IsRequired(false) // Nullable
-            .HasComment("Fecha y hora de última actualización del registro.");
-
-        // ÍNDICE UNICO
         builder.HasIndex(e => e.Codigo).IsUnique().HasDatabaseName("periodos_lectivos_codigo_key");
 
-        // ÍNDICES adicionales
-        builder.HasIndex(e => e.Estado).HasDatabaseName("IX_periodos_lectivos_estado");
+        builder.HasIndex(e => e.Activo).HasDatabaseName("IX_periodos_lectivos_estado");
 
         builder.HasIndex(e => e.FechaInicio).HasDatabaseName("IX_periodos_lectivos_fecha_inicio");
 
         builder.HasIndex(e => e.FechaFin).HasDatabaseName("IX_periodos_lectivos_fecha_fin");
 
-        // Índice compuesto para búsqueda por rango de fechas
         builder
             .HasIndex(e => new { e.FechaInicio, e.FechaFin })
             .HasDatabaseName("IX_periodos_lectivos_rango_fechas");
 
-        // CHECK CONSTRAINTS (si se soportan)
-        // builder.HasCheckConstraint("CK_periodos_lectivos_fechas", "fecha_fin > fecha_inicio");
-
-        // Relación inversa con Autoridades
         builder
             .HasMany(p => p.Autoridades)
             .WithOne(a => a.PeriodoLectivo)
             .HasForeignKey(a => a.PeriodoLectivoId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // Relación inversa con Propuestas (si existe)
-        // builder.HasMany(p => p.Propuestas)
-        //     .WithOne(prop => prop.PeriodoLectivo)
-        //     .HasForeignKey(prop => prop.PeriodoLectivoId)
-        //     .OnDelete(DeleteBehavior.Restrict);
+        builder
+            .HasMany(p => p.Propuestas)
+            .WithOne(prop => prop.PeriodoLectivo)
+            .HasForeignKey(prop => prop.PeriodoLectivoId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

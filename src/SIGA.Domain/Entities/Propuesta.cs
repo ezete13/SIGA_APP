@@ -38,7 +38,7 @@ public partial class Propuesta
 
     public string? ConceptoPago { get; set; }
 
-    public string required EmailEncargado { get; set; }
+    public string? EmailEncargado { get; set; }
 
     public string? PlanEstudioPdf { get; set; }
 
@@ -67,8 +67,6 @@ public partial class Propuesta
     public virtual required TipoPropuesta TipoPropuesta { get; set; }
 
     public virtual required EstadoPropuesta EstadoPropuesta { get; set; }
-
-    public virtual required Usuario Usuario { get; set; }
 
     public virtual PropuestaWeb? PropuestaWeb { get; set; }
 

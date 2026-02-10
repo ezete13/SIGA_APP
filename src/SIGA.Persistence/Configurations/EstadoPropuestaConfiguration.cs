@@ -5,14 +5,14 @@ using SIGA.Domain.Entities;
 
 namespace SIGA.Persistence.Configurations;
 
-public class TiposEstadoPropuestaConfiguration : IEntityTypeConfiguration<TiposEstadoPropuesta>
+public class EstadoPropuestaConfiguration : IEntityTypeConfiguration<EstadoPropuesta>
 {
-    public void Configure(EntityTypeBuilder<TiposEstadoPropuesta> builder)
+    public void Configure(EntityTypeBuilder<EstadoPropuesta> builder)
     {
-        builder.HasKey(e => e.Id).HasName("tipos_estado_propuesta_pkey");
+        builder.HasKey(e => e.Id).HasName("estados_propuesta_pkey");
 
         builder.ToTable(
-            "tipos_estado_propuesta",
+            "estados_propuesta",
             tb => tb.HasComment("Catálogo de estados posibles para las propuestas académicas.")
         );
 
@@ -43,46 +43,20 @@ public class TiposEstadoPropuestaConfiguration : IEntityTypeConfiguration<TiposE
             .HasComment("Descripción del tipo de estado.");
 
         builder
-            .Property(e => e.Estado)
-            .HasColumnName("estado")
+            .Property(e => e.Activo)
+            .HasColumnName("activo")
             .HasDefaultValue(true)
             .IsRequired()
             .HasComment("Estado activo/inactivo (true=activo, false=inactivo).");
 
         builder
-            .Property(e => e.CreadoEn)
-            .HasColumnName("creado_en")
-            .HasColumnType("timestamp without time zone")
-            .HasDefaultValueSql("CURRENT_TIMESTAMP")
-            .IsRequired(false)
-            .HasComment("Fecha y hora de creación del registro.");
-
-        builder
-            .Property(e => e.ActualizadoEn)
-            .HasColumnName("actualizado_en")
-            .HasColumnType("timestamp without time zone")
-            .HasDefaultValueSql("CURRENT_TIMESTAMP")
-            .IsRequired(false)
-            .HasComment("Fecha y hora de última actualización del registro.");
-
-        // RELACIONES INVERSAS
-        builder
-            .HasMany(t => t.Propuestas)
-            .WithOne(p => p.TipoEstadoPropuesta)
-            .HasForeignKey(p => p.TipoEstadoPropuestaId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder
-            .HasMany(t => t.HistorialEstadoPropuestas)
-            .WithOne(h => h.TipoEstadoPropuesta)
-            .HasForeignKey(h => h.TipoEstadoPropuestaId)
+            .HasMany(t => t.Propuesta)
+            .WithOne(p => p.EstadoPropuesta)
+            .HasForeignKey(p => p.EstadoPropuestaId)
             .OnDelete(DeleteBehavior.Restrict);
 
         // ÍNDICES
-        builder
-            .HasIndex(e => e.Codigo)
-            .IsUnique()
-            .HasDatabaseName("tipos_estado_propuesta_codigo_key");
+        builder.HasIndex(e => e.Codigo).IsUnique().HasDatabaseName("estados_propuesta_codigo_key");
 
         builder.HasIndex(e => e.Estado).HasDatabaseName("IX_tipos_estado_propuesta_estado");
 

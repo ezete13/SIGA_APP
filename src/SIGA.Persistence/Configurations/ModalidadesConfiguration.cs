@@ -5,9 +5,9 @@ using SIGA.Domain.Entities;
 
 namespace SIGA.Persistence.Configurations;
 
-public class ModalidadesConfiguration : IEntityTypeConfiguration<Modalidades>
+public class ModalidadConfiguration : IEntityTypeConfiguration<Modalidad>
 {
-    public void Configure(EntityTypeBuilder<Modalidades> builder)
+    public void Configure(EntityTypeBuilder<Modalidad> builder)
     {
         builder.HasKey(e => e.Id).HasName("modalidades_pkey");
 
@@ -42,51 +42,26 @@ public class ModalidadesConfiguration : IEntityTypeConfiguration<Modalidades>
         builder
             .Property(e => e.Descripcion)
             .HasColumnName("descripcion")
-            .IsRequired(false) // Nullable
+            .IsRequired(false)
             .HasComment("Descripción detallada de la modalidad.");
 
         builder
-            .Property(e => e.Estado)
-            .HasColumnName("estado")
+            .Property(e => e.Activo)
+            .HasColumnName("activo")
             .HasDefaultValue(true)
-            .IsRequired(false) // Nullable
+            .IsRequired(false)
             .HasComment("Estado activo/inactivo (true=activa, false=inactiva).");
 
-        builder
-            .Property(e => e.CreadoEn)
-            .HasColumnName("creado_en")
-            .HasColumnType("timestamp without time zone")
-            .HasDefaultValueSql("CURRENT_TIMESTAMP")
-            .IsRequired(false) // Nullable
-            .HasComment("Fecha y hora de creación del registro.");
-
-        builder
-            .Property(e => e.ActualizadoEn)
-            .HasColumnName("actualizado_en")
-            .HasColumnType("timestamp without time zone")
-            .HasDefaultValueSql("CURRENT_TIMESTAMP")
-            .IsRequired(false) // Nullable
-            .HasComment("Fecha y hora de última actualización del registro.");
-
-        // ÍNDICES UNICOS
         builder.HasIndex(e => e.Codigo).IsUnique().HasDatabaseName("modalidades_codigo_key");
 
         builder.HasIndex(e => e.Nombre).IsUnique().HasDatabaseName("modalidades_nombre_key");
 
-        // ÍNDICES adicionales
-        builder.HasIndex(e => e.Estado).HasDatabaseName("IX_modalidades_estado");
+        builder.HasIndex(e => e.Activo).HasDatabaseName("IX_modalidades_estado");
 
-        // Relación inversa con Inscripciones
         builder
-            .HasMany(m => m.Inscripciones)
-            .WithOne(i => i.Modalidad)
-            .HasForeignKey(i => i.ModalidadId)
+            .HasMany(m => m.Propuestas)
+            .WithOne(p => p.Modalidad)
+            .HasForeignKey(p => p.ModalidadId)
             .OnDelete(DeleteBehavior.Restrict);
-
-        // Relación inversa con Propuestas (si existe)
-        // builder.HasMany(m => m.Propuestas)
-        //     .WithOne(p => p.Modalidad)
-        //     .HasForeignKey(p => p.ModalidadId)
-        //     .OnDelete(DeleteBehavior.Restrict);
     }
 }

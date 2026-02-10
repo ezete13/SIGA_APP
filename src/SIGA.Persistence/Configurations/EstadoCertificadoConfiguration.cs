@@ -1,0 +1,67 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SIGA.Domain.Entities;
+
+namespace SIGA.Persistence.Configurations;
+
+public class EstadoCertificadoConfiguration : IEntityTypeConfiguration<EstadoCertificado>
+{
+    public void Configure(EntityTypeBuilder<EstadoCertificado> builder)
+    {
+        builder.HasKey(e => e.Id).HasName("estados_certificado_pkey");
+
+        builder.ToTable(
+            "estados_certificado",
+            tb => tb.HasComment("Catálogo de estados posibles para las certificaciones.")
+        );
+
+        builder
+            .Property(e => e.Id)
+            .HasColumnName("id")
+            .HasComment("ID único autoincremental.")
+            .UseIdentityColumn();
+
+        builder
+            .Property(e => e.Codigo)
+            .HasColumnName("codigo")
+            .HasMaxLength(10)
+            .IsRequired()
+            .HasComment("Código interno único.");
+
+        builder
+            .Property(e => e.Nombre)
+            .HasColumnName("nombre")
+            .HasMaxLength(50)
+            .IsRequired()
+            .HasComment("Nombre del estado. Ej: Pendiente, Emitido, Anulado.");
+
+        builder
+            .Property(e => e.Descripcion)
+            .HasColumnName("descripcion")
+            .IsRequired(false)
+            .HasComment("Descripción del tipo de estado.");
+
+        builder
+            .Property(e => e.Activo)
+            .HasColumnName("activo")
+            .HasDefaultValue(true)
+            .IsRequired()
+            .HasComment("Estado activo/inactivo (true=activo, false=inactivo).");
+
+        builder
+            .HasMany(t => t.Certificado)
+            .WithOne(c => c.EstadoCertificado)
+            .HasForeignKey(c => c.EstadoCertificadoId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // ÍNDICES
+        builder
+            .HasIndex(e => e.Codigo)
+            .IsUnique()
+            .HasDatabaseName("estados_certificado_codigo_key");
+
+        builder.HasIndex(e => e.Activo).HasDatabaseName("IX_estados_certificado_estado");
+
+        builder.HasIndex(e => e.Nombre).HasDatabaseName("IX_estados_certificado_nombre");
+    }
+}
