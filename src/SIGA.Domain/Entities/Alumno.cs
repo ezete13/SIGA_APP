@@ -5,7 +5,7 @@ public class Alumno
     public int Id { get; set; }
     public Guid Uuid { get; set; } = Guid.NewGuid();
     public int TipoDocumentoId { get; set; }
-    public int EstadoAlumnoId { get; set; }
+    public int AlumnoEstadoId { get; set; }
     public string NumDocumento { get; set; } = string.Empty;
     public string Apellido { get; set; } = string.Empty;
     public string Nombre { get; set; } = string.Empty;
@@ -28,7 +28,7 @@ public class Alumno
     public DateTime CreadoEn { get; set; } = DateTime.UtcNow;
     public DateTime? ActualizadoEn { get; set; }
     public virtual TipoDocumento TipoDocumento { get; set; } = null!;
-    public virtual EstadoAlumno EstadoAlumno { get; set; } = null!;
+    public virtual AlumnoEstado AlumnoEstado { get; set; } = null!;
     public virtual ICollection<Certificado> Certificados { get; set; } = new List<Certificado>();
     public virtual ICollection<Inscripcion> Inscripciones { get; set; } = new List<Inscripcion>();
     public virtual ICollection<Preinscripcion> Preinscripciones { get; set; } =

@@ -30,7 +30,7 @@ public partial class Propuesta
 
     public int CuposDisponibles { get; set; }
 
-    public int? CantidadHoras { get; set; }
+    public int CantidadHoras { get; set; }
 
     public decimal? ImporteBase { get; set; }
 

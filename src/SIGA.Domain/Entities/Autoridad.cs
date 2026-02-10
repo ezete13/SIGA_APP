@@ -8,13 +8,15 @@ public partial class Autoridad
 
     public required int PeriodoLectivoId { get; set; }
 
-    public required string Cargo { get; set; }
-
     public required string Nombre { get; set; }
+
+    public required string Apellido { get; set; }
+
+    public required string Cargo { get; set; }
 
     public required string FirmaImg { get; set; }
 
-    public required bool Estado { get; set; } = true;
+    public required bool Activo { get; set; } = true;
 
     public required DateTime? CreadoEn { get; set; }
 
@@ -23,7 +25,4 @@ public partial class Autoridad
     public virtual required PeriodoLectivo PeriodoLectivo { get; set; }
 
     public virtual required Unidad Unidad { get; set; }
-
-    public virtual ICollection<CertificadoAutoridad> CertificadoAutoridades { get; set; } =
-        new List<CertificadoAutoridad>();
 }

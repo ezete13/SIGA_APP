@@ -9,8 +9,14 @@ public class AutoridadConfiguration : IEntityTypeConfiguration<Autoridad>
 {
     public void Configure(EntityTypeBuilder<Autoridad> builder)
     {
-        builder.HasKey(e => e.Id).HasName("autoridades_pkey");
+        ConfigureTable(builder);
+        ConfigureProperties(builder);
+        ConfigureIndexes(builder);
+        ConfigureRelationships(builder);
+    }
 
+    private static void ConfigureTable(EntityTypeBuilder<Autoridad> builder)
+    {
         builder.ToTable(
             "autoridades",
             tb =>
@@ -19,6 +25,11 @@ public class AutoridadConfiguration : IEntityTypeConfiguration<Autoridad>
                 )
         );
 
+        builder.HasKey(e => e.Id).HasName("autoridades_pkey");
+    }
+
+    private static void ConfigureProperties(EntityTypeBuilder<Autoridad> builder)
+    {
         builder
             .Property(e => e.Id)
             .HasColumnName("id")
@@ -26,7 +37,28 @@ public class AutoridadConfiguration : IEntityTypeConfiguration<Autoridad>
             .UseIdentityColumn();
 
         builder
+            .Property(e => e.UnidadId)
+            .HasColumnName("unidad_id")
+            .IsRequired()
+            .HasComment("ID de la unidad académica en la que opera (FK a unidad.id).");
+
+        builder
+            .Property(e => e.PeriodoLectivoId)
+            .HasColumnName("periodo_lectivo_id")
+            .IsRequired()
+            .HasComment(
+                "ID del periodo lectivo en el que cumple con el cargo (FK a periodo_lectivo.id)."
+            );
+
+        builder
             .Property(e => e.Nombre)
+            .HasColumnName("nombre")
+            .HasMaxLength(255)
+            .IsRequired()
+            .HasComment("Nombre completo de la autoridad.");
+
+        builder
+            .Property(e => e.Apellido)
             .HasColumnName("nombre")
             .HasMaxLength(255)
             .IsRequired()
@@ -47,22 +79,8 @@ public class AutoridadConfiguration : IEntityTypeConfiguration<Autoridad>
             .HasComment("Ruta relativa de la imagen o codigo svg de la firma de la autoridad");
 
         builder
-            .Property(e => e.PeriodoLectivoId)
-            .HasColumnName("periodo_lectivo_id")
-            .IsRequired()
-            .HasComment(
-                "ID del periodo lectivo en el que cumple con el cargo (FK a periodo_lectivo.id)."
-            );
-
-        builder
-            .Property(e => e.UnidadId)
-            .HasColumnName("unidad_id")
-            .IsRequired()
-            .HasComment("ID de la unidad académica en la que opera (FK a unidad.id).");
-
-        builder
-            .Property(e => e.Estado)
-            .HasColumnName("estado")
+            .Property(e => e.Activo)
+            .HasColumnName("activo")
             .HasDefaultValue(true)
             .IsRequired()
             .HasComment("Estado activo/inactivo (true=activa, false=inactiva).");
@@ -82,37 +100,39 @@ public class AutoridadConfiguration : IEntityTypeConfiguration<Autoridad>
             .HasDefaultValueSql("CURRENT_TIMESTAMP")
             .IsRequired()
             .HasComment("Fecha y hora de última actualización del registro.");
+    }
 
-        // RELACIÓN con PeriodoLectivo (Required)
-        builder
-            .HasOne(d => d.PeriodoLectivo)
-            .WithMany(p => p.Autoridad)
-            .HasForeignKey(d => d.PeriodoLectivoId)
-            .OnDelete(DeleteBehavior.Restrict)
-            .HasConstraintName("autoridades_periodo_lectivo_id_fkey")
-            .IsRequired();
-
-        // RELACIÓN con Unidad (Required)
-        builder
-            .HasOne(d => d.Unidad)
-            .WithMany(p => p.Autoridad)
-            .HasForeignKey(d => d.UnidadId)
-            .OnDelete(DeleteBehavior.Restrict)
-            .HasConstraintName("autoridades_unidad_id_fkey")
-            .IsRequired();
-
-        // ÍNDICES
+    private static void ConfigureIndexes(EntityTypeBuilder<Autoridad> builder)
+    {
         builder
             .HasIndex(e => e.PeriodoLectivoId)
             .HasDatabaseName("IX_autoridades_periodo_lectivo_id");
 
         builder.HasIndex(e => e.UnidadId).HasDatabaseName("IX_autoridades_unidad_id");
 
-        builder.HasIndex(e => e.Estado).HasDatabaseName("IX_autoridades_estado");
+        builder.HasIndex(e => e.Activo).HasDatabaseName("IX_autoridades_estado");
 
-        // Índice compuesto si es necesario
         builder
             .HasIndex(e => new { e.UnidadId, e.PeriodoLectivoId })
             .HasDatabaseName("IX_autoridades_unidad_periodo");
+    }
+
+    private static void ConfigureRelationships(EntityTypeBuilder<Autoridad> builder)
+    {
+        builder
+            .HasOne(d => d.Unidad)
+            .WithMany(p => p.Autoridades)
+            .HasForeignKey(d => d.UnidadId)
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("autoridades_unidad_id_fkey")
+            .IsRequired();
+
+        builder
+            .HasOne(d => d.PeriodoLectivo)
+            .WithMany(p => p.Autoridades)
+            .HasForeignKey(d => d.PeriodoLectivoId)
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("autoridades_periodo_lectivo_id_fkey")
+            .IsRequired();
     }
 }

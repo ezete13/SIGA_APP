@@ -60,7 +60,7 @@ public class CertificadoConfiguration : IEntityTypeConfiguration<Certificado>
             .HasComment("ID del alumno certificado (FK a alumnos.id).");
 
         builder
-            .Property(e => e.TipoEstadoCertificadoId)
+            .Property(e => e.CertificadoEstadoId)
             .HasColumnName("estado_certificado_id")
             .IsRequired()
             .HasComment("ID del estado del certificado (FK a estados_certificado.id).");
@@ -134,7 +134,7 @@ public class CertificadoConfiguration : IEntityTypeConfiguration<Certificado>
             .HasComment("Fecha de emisión del certificado.");
 
         builder
-            .Property(e => e.UsuarioEmisionId)
+            .Property(e => e.UsuarioId)
             .HasColumnName("usuario_emision_id")
             .HasComment("ID del usuario que emitió el certificado (FK a usuarios.id).");
 
@@ -177,7 +177,7 @@ public class CertificadoConfiguration : IEntityTypeConfiguration<Certificado>
             .HasComment("Motivo de la revocación del certificado.");
 
         builder
-            .Property(e => e.Estado)
+            .Property(e => e.Activo)
             .HasColumnName("estado")
             .HasDefaultValue(true)
             .HasComment("Estado activo/inactivo del registro del certificado.");
@@ -196,7 +196,6 @@ public class CertificadoConfiguration : IEntityTypeConfiguration<Certificado>
 
     private static void ConfigureIndexes(EntityTypeBuilder<Certificado> builder)
     {
-        // Índices únicos
         builder.HasIndex(e => e.Uuid).IsUnique().HasDatabaseName("uk_certificados_uuid");
 
         builder.HasIndex(e => e.Token).IsUnique().HasDatabaseName("uk_certificados_token");
@@ -212,7 +211,6 @@ public class CertificadoConfiguration : IEntityTypeConfiguration<Certificado>
             .HasDatabaseName("uk_certificados_url_verificacion")
             .HasFilter("url_verificacion IS NOT NULL");
 
-        // Índices de búsqueda frecuente
         builder
             .HasIndex(e => new { e.AlumnoId, e.EsVersionActual })
             .HasDatabaseName("ix_certificados_alumno_version_actual");
@@ -225,19 +223,16 @@ public class CertificadoConfiguration : IEntityTypeConfiguration<Certificado>
 
         builder.HasIndex(e => e.TituloCertificado).HasDatabaseName("ix_certificados_titulo");
 
-        // Índices de llaves foráneas
         builder.HasIndex(e => e.AlumnoId).HasDatabaseName("ix_certificados_alumno");
 
         builder.HasIndex(e => e.InscripcionId).HasDatabaseName("ix_certificados_inscripcion");
 
-        builder.HasIndex(e => e.TipoEstadoCertificadoId).HasDatabaseName("ix_certificados_estado");
+        builder.HasIndex(e => e.CertificadoEstadoId).HasDatabaseName("ix_certificados_estado");
 
-        builder
-            .HasIndex(e => e.UsuarioEmisionId)
-            .HasDatabaseName("ix_certificados_usuario_emision");
+        builder.HasIndex(e => e.UsuarioId).HasDatabaseName("ix_certificados_usuario_emision");
 
         // Índices para filtros comunes
-        builder.HasIndex(e => e.Estado).HasDatabaseName("ix_certificados_estado_registro");
+        builder.HasIndex(e => e.Activo).HasDatabaseName("ix_certificados_estado_registro");
 
         builder
             .HasIndex(e => e.EsVersionActual)
@@ -284,30 +279,13 @@ public class CertificadoConfiguration : IEntityTypeConfiguration<Certificado>
         builder
             .HasOne(e => e.EstadoCertificado)
             .WithMany()
-            .HasForeignKey(e => e.TipoEstadoCertificadoId)
+            .HasForeignKey(e => e.CertificadoEstadoId)
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("fk_certificados_estado");
-
-        // Relación con Usuario (si existe la entidad Usuario)
-        // Nota: Esta relación es opcional si no existe la entidad Usuario
-        /*if (builder.Metadata.ClrType.Assembly.GetType("SIGA.Domain.Entities.Usuario") != null)
-        {
-            builder
-                .HasOne<Usuario>()
-                .WithMany()
-                .HasForeignKey(e => e.UsuarioEmisionId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("fk_certificados_usuario_emision")
-                .IsRequired(false);
-        }*/
     }
 
     private static void ConfigureQueryFilters(EntityTypeBuilder<Certificado> builder)
     {
-        // Filtro global para solo obtener registros activos
-        builder.HasQueryFilter(e => e.Estado == true);
-
-        // Opcional: Filtro para excluir certificados revocados en algunas consultas
-        // builder.HasQueryFilter(e => e.Estado == true && e.FechaRevocacion == null);
+        builder.HasQueryFilter(e => e.Activo == true);
     }
 }

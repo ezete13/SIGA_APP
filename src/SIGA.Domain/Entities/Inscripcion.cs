@@ -10,7 +10,7 @@ public class Inscripcion
 
     public required int PropuestaId { get; set; }
 
-    public required int TipoEstadoInscripcionId { get; set; }
+    public required int InscripcionEstadoId { get; set; }
 
     public int? PreinscripcionId { get; set; }
 
@@ -30,7 +30,7 @@ public class Inscripcion
 
     public virtual required Propuesta Propuesta { get; set; }
 
-    public virtual required EstadoInscripcion TipoEstadoInscripcion { get; set; }
+    public virtual required EstadoInscripcion InscripcionEstado { get; set; }
 
     public virtual Preinscripcion? Preinscripcion { get; set; }
 }

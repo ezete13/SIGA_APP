@@ -1,28 +1,25 @@
-// SIGA.Persistence/Configurations/HistorialEstadoCertificacionesConfiguration.cs
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SIGA.Domain.Entities;
 
 namespace SIGA.Persistence.Configurations;
 
-public class HistorialEstadoCertificacionesConfiguration
-    : IEntityTypeConfiguration<HistorialEstadoCertificaciones>
+public class CertificadoHistorialConfiguration : IEntityTypeConfiguration<CertificadoHistorial>
 {
-    public void Configure(EntityTypeBuilder<HistorialEstadoCertificaciones> builder)
+    public void Configure(EntityTypeBuilder<CertificadoHistorial> builder)
     {
-        // Tabla SIN clave primaria (historial de solo lectura)
         builder.HasNoKey();
 
         builder.ToTable("historial_estado_certificaciones");
 
         builder
-            .Property(e => e.CertificacionId)
+            .Property(e => e.CertificadoId)
             .HasColumnName("certificacion_id")
             .IsRequired()
             .HasComment("ID de la certificación cuyo estado cambió.");
 
         builder
-            .Property(e => e.TipoEstadoCertificadoId)
+            .Property(e => e.CertificadoEstadoId)
             .HasColumnName("tipo_estado_certificado_id")
             .IsRequired()
             .HasComment("ID del nuevo estado de la certificación.");

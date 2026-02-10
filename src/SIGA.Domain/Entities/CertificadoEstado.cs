@@ -1,6 +1,6 @@
 ﻿namespace SIGA.Domain.Entities;
 
-public partial class EstadoAlumno
+public partial class CertificadoEstado
 {
     public int Id { get; set; }
 
@@ -12,5 +12,5 @@ public partial class EstadoAlumno
 
     public bool Activo { get; set; } = true;
 
-    public virtual ICollection<Alumno> Alumnos { get; set; } = new List<Alumno>();
+    public virtual ICollection<Certificado> Certificado { get; set; } = new List<Certificado>();
 }

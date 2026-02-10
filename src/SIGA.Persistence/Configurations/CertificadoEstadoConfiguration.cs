@@ -4,9 +4,9 @@ using SIGA.Domain.Entities;
 
 namespace SIGA.Persistence.Configurations;
 
-public class EstadoCertificadoConfiguration : IEntityTypeConfiguration<EstadoCertificado>
+public class CertificadoEstadoConfiguration : IEntityTypeConfiguration<CertificadoEstado>
 {
-    public void Configure(EntityTypeBuilder<EstadoCertificado> builder)
+    public void Configure(EntityTypeBuilder<CertificadoEstado> builder)
     {
         builder.HasKey(e => e.Id).HasName("estados_certificado_pkey");
 
@@ -50,8 +50,8 @@ public class EstadoCertificadoConfiguration : IEntityTypeConfiguration<EstadoCer
 
         builder
             .HasMany(t => t.Certificado)
-            .WithOne(c => c.EstadoCertificado)
-            .HasForeignKey(c => c.EstadoCertificadoId)
+            .WithOne(c => c.CertificadoEstado)
+            .HasForeignKey(c => c.CertificadoEstadoId)
             .OnDelete(DeleteBehavior.Restrict);
 
         // ÍNDICES

@@ -2,17 +2,21 @@
 
 public partial class CertificadoHistorial
 {
-    public required int CertificacionId { get; set; }
+    public int Id { get; set; }
 
-    public required int EstadoCertificadoId { get; set; }
+    public required int CertificadoId { get; set; }
 
-    public required int UsuarioId { get; set; }
+    public required int CertificadoEstadoId { get; set; }
 
-    public required DateTime CreadoEn { get; set; } = DateTime.UtcNow;
+    public int? UsuarioId { get; set; }
+
+    public DateTime Fecha { get; set; } = DateTime.UtcNow;
+
+    public string? Observacion { get; set; }
+
+    public string? Ip { get; set; }
 
     public virtual required Certificado Certificado { get; set; }
 
-    public virtual required EstadoCertificado EstadoCertificado { get; set; }
-
-    public virtual required Usuarios Usuario { get; set; }
+    public virtual required CertificadoEstado CertificadoEstado { get; set; }
 }
