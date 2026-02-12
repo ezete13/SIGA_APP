@@ -70,6 +70,9 @@ public partial class Propuesta
 
     public virtual PropuestaWeb? PropuestaWeb { get; set; }
 
+    public virtual ICollection<Preinscripcion> Preinscripciones { get; set; } =
+        new List<Preinscripcion>();
+
     public virtual ICollection<Inscripcion> Inscripciones { get; set; } = new List<Inscripcion>();
 
     public virtual ICollection<PropuestaDocente> PropuestaDocentes { get; set; } =

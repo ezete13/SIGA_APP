@@ -1,3 +1,6 @@
+using SIGA.Domain.Enums;
+using SIGA.Domain.Exceptions;
+
 namespace SIGA.Domain.Entities;
 
 public class Preinscripcion
@@ -28,9 +31,64 @@ public class Preinscripcion
 
     public DateTime? ActualizadoEn { get; set; }
 
-    public virtual required Propuesta Propuesta { get; set; }
+    public virtual Propuesta Propuesta { get; set; } = null!;
 
-    public virtual required EstadoPreinscripcion EstadoPreinscripcion { get; set; }
+    public virtual Inscripcion Inscripcion { get; set; } = null!;
+
+    public virtual PreinscripcionEstado PreinscripcionEstado { get; set; } = null!;
 
     public virtual Alumno? Alumno { get; set; }
+
+    public static Preinscripcion Crear(
+        int propuestaId,
+        string documento,
+        string apellido,
+        string nombre,
+        string email
+    )
+    {
+        return new Preinscripcion
+        {
+            Uuid = Guid.NewGuid(),
+            PropuestaId = propuestaId,
+            EstadoPreinscripcionId = (int)EstadoPreinscripcionEnum.EnEspera,
+            Documento = documento,
+            Apellido = apellido,
+            Nombre = nombre,
+            Email = email,
+            CreadoEn = DateTime.UtcNow,
+        };
+    }
+
+    public void Aprobar(int alumnoId)
+    {
+        if (this.EstadoPreinscripcionId == (int)EstadoPreinscripcionEnum.Revocada)
+            throw new DomainException(
+                "No se puede aprobar una preinscripción que ya ha sido revocada."
+            );
+
+        if (this.EstadoPreinscripcionId == (int)EstadoPreinscripcionEnum.Aprobada)
+            return;
+
+        if (alumnoId <= 0)
+            throw new DomainException(
+                "Debe proporcionar un Alumno válido para aprobar la preinscripción."
+            );
+
+        this.AlumnoId = alumnoId;
+        this.EstadoPreinscripcionId = (int)EstadoPreinscripcionEnum.Aprobada;
+        this.ActualizadoEn = DateTime.UtcNow;
+    }
+
+    public void Revocar(string motivo)
+    {
+        if (this.EstadoPreinscripcionId == (int)EstadoPreinscripcionEnum.Aprobada)
+            throw new DomainException(
+                "No se puede revocar una preinscripción que ya ha sido aprobada."
+            );
+
+        this.EstadoPreinscripcionId = (int)EstadoPreinscripcionEnum.Revocada;
+        this.Observaciones = motivo;
+        this.ActualizadoEn = DateTime.UtcNow;
+    }
 }

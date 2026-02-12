@@ -44,7 +44,7 @@ public class AlumnoConfiguration : IEntityTypeConfiguration<Alumno>
             .HasComment("ID del tipo de documento (FK a tipos_documento.id).");
 
         builder
-            .Property(e => e.EstadoAlumnoId)
+            .Property(e => e.AlumnoEstadoId)
             .HasColumnName("estado_alumno_id")
             .HasComment("ID del estado actual (FK a estados_alumno.id).");
 
@@ -220,7 +220,7 @@ public class AlumnoConfiguration : IEntityTypeConfiguration<Alumno>
 
         builder.HasIndex(e => e.TipoDocumentoId).HasDatabaseName("ix_alumnos_tipo_documento");
 
-        builder.HasIndex(e => e.EstadoAlumnoId).HasDatabaseName("ix_alumnos_estado_alumno");
+        builder.HasIndex(e => e.AlumnoEstadoId).HasDatabaseName("ix_alumnos_estado_alumno");
 
         // Índices de filtro
         builder.HasIndex(e => e.Activo).HasDatabaseName("ix_alumnos_activo");
@@ -238,9 +238,9 @@ public class AlumnoConfiguration : IEntityTypeConfiguration<Alumno>
             .HasConstraintName("fk_alumnos_tipo_documento");
 
         builder
-            .HasOne(e => e.EstadoAlumno)
+            .HasOne(e => e.AlumnoEstado)
             .WithMany()
-            .HasForeignKey(e => e.EstadoAlumnoId)
+            .HasForeignKey(e => e.AlumnoEstadoId)
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("fk_alumnos_estado_alumno");
     }

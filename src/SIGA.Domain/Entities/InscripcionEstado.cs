@@ -1,6 +1,6 @@
 ﻿namespace SIGA.Domain.Entities;
 
-public partial class EstadoInscripcion
+public partial class InscripcionEstado
 {
     public int Id { get; set; }
 

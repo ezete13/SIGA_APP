@@ -1,4 +1,7 @@
-﻿namespace SIGA.Domain.Entities;
+﻿using SIGA.Domain.Enums;
+using SIGA.Domain.Exceptions;
+
+namespace SIGA.Domain.Entities;
 
 public class Inscripcion
 {
@@ -26,11 +29,63 @@ public class Inscripcion
 
     public DateTime? ActualizadoEn { get; set; }
 
-    public virtual required Alumno Alumno { get; set; }
+    public virtual Alumno Alumno { get; set; } = null!;
 
-    public virtual required Propuesta Propuesta { get; set; }
+    public virtual Propuesta Propuesta { get; set; } = null!;
 
-    public virtual required EstadoInscripcion InscripcionEstado { get; set; }
+    public virtual InscripcionEstado InscripcionEstado { get; set; } = null!;
 
     public virtual Preinscripcion? Preinscripcion { get; set; }
+
+    // Método de Fábrica: Asegura que toda inscripción nazca de una preinscripción aprobada
+    public static Inscripcion CrearDesdePreinscripcion(Preinscripcion preinscripcion, int alumnoId)
+    {
+        // Regla de Negocio: No existe inscripción sin preinscripción aprobada
+        if (preinscripcion.EstadoPreinscripcionId != (int)EstadoPreinscripcionEnum.Aprobada)
+            throw new DomainException(
+                "No se puede generar una inscripción de una preinscripción no aprobada."
+            );
+
+        return new Inscripcion
+        {
+            Uuid = Guid.NewGuid(),
+            AlumnoId = alumnoId,
+            PropuestaId = preinscripcion.PropuestaId,
+            PreinscripcionId = preinscripcion.Id,
+            InscripcionEstadoId = (int)EstadoInscripcionEnum.Activa,
+            FechaInscripcion = DateTime.UtcNow,
+            CreadoEn = DateTime.UtcNow,
+        };
+    }
+
+    // Regla de Negocio: La vigencia depende exclusivamente del estado 'Activa'
+    public bool EsVigente()
+    {
+        return InscripcionEstadoId == (int)EstadoInscripcionEnum.Activa;
+    }
+
+    // Regla de Negocio: Finalización Irreversible
+    public void Finalizar()
+    {
+        if (InscripcionEstadoId == (int)EstadoInscripcionEnum.Baja)
+            throw new DomainException(
+                "No se puede finalizar una inscripción que ya tiene la baja."
+            );
+
+        this.InscripcionEstadoId = (int)EstadoInscripcionEnum.Finalizada;
+        this.ActualizadoEn = DateTime.UtcNow;
+    }
+
+    // Regla de Negocio: Proceso de Baja
+    public void DarDeBaja(string motivo)
+    {
+        if (InscripcionEstadoId == (int)EstadoInscripcionEnum.Finalizada)
+            throw new DomainException("No se puede dar de baja una inscripción ya finalizada.");
+
+        this.InscripcionEstadoId = (int)EstadoInscripcionEnum.Baja;
+        this.EsBaja = true;
+        this.FechaBaja = DateTime.UtcNow;
+        this.MotivoBaja = motivo;
+        this.ActualizadoEn = DateTime.UtcNow;
+    }
 }
