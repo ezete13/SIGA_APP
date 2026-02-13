@@ -1,4 +1,4 @@
-﻿namespace SIGA.Domain.Entities;
+﻿namespace SIGA.Domain.Entities.Core;
 
 public partial class PropuestaDocente
 {

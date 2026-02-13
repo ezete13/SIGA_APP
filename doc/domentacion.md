@@ -154,3 +154,117 @@ Regla Pro: "No permitas CrearDesdePreinscripcion si repo.Any(x => x.AlumnoId == 
 
 
 
+---
+
+
+
+## Autoridades
+
+La entidad **Autoridad** gestiona la información de los funcionarios habilitados para la validación y firma de documentos oficiales. Su validez está estrictamente vinculada a la estructura organizativa y temporal de la institución.
+
+### Configuración y Vinculación Jerárquica
+
+Para que una autoridad sea asociada correctamente a un documento (Certificado), el sistema sigue una cadena de integridad referencial basada en la **Unidad Académica**:
+
+1. **Relación con la Unidad Académica:** Toda autoridad debe estar asociada obligatoriamente a una Unidad Académica desde su creación.
+2. **Trazabilidad del Certificado:** La determinación de las firmas se realiza mediante el siguiente flujo de resolución:
+* `Certificado`  vinculado a una `Inscripción`.
+* `Inscripción`  vinculada a una `Propuesta`.
+* `Propuesta`  pertenece a una `Unidad Académica`.
+* `Unidad Académica`  determina el pool de `Autoridades` disponibles.
+
+
+3. **Consistencia Temporal:** La autoridad debe estar vinculada al **Ciclo Lectivo** correspondiente a la propuesta académica. El sistema solo considerará como firmantes a aquellas autoridades cuyo ciclo lectivo coincida con el del proceso del alumno.
+
+### Reglas de Negocio para Firmas
+
+* **Atributo de Firma:** Una autoridad solo aparecerá como firmante en los certificados si su atributo `firmaCertificado` está definido como **True**.
+* **Orden de Prelación:** En la sección de parametrización, se puede definir el **Orden de la Firma**, determinando la posición jerárquica en la que aparecerán las rúbricas en el documento final.
+
+### Restricciones de Edición e Integridad
+
+Para proteger la validez legal de los documentos ya emitidos, se aplican las siguientes restricciones de modificación:
+
+* **Bloqueo de Ciclo Lectivo:** Está estrictamente prohibido editar el **Ciclo Lectivo** de una autoridad si ya existen certificados generados y vinculados a dicho registro.
+* **Modificaciones Permitidas:** En caso de existir vínculos activos, el administrador solo podrá realizar cambios cosméticos o de forma, tales como:
+1. Nombre de la autoridad.
+2. Orden de la firma en la parametrización.
+
+
+* **Inalterabilidad Histórica:** Cualquier cambio de autoridad para un nuevo periodo debe gestionarse mediante la creación de un nuevo registro o vinculación, preservando los datos de las autoridades anteriores para consultas históricas.
+
+---
+
+### Validación de Irregularidades y Casos de Borde
+
+#### 1. Vacancia de Firma
+
+* **Escenario:** Se intenta generar un certificado para una propuesta cuya Unidad Académica no tiene autoridades con `firmaCertificado = True` para el ciclo lectivo vigente.
+* **Acción:** El sistema debe emitir una excepción y bloquear la generación del certificado para evitar documentos sin validez legal.
+
+#### 2. Superposición de Autoridades
+
+* **Escenario:** Existencia de múltiples autoridades con el mismo rango u orden de firma para una misma Unidad Académica y Ciclo Lectivo.
+* **Regla:** El sistema debe validar que no existan conflictos de jerarquía en la parametrización antes de permitir la activación del atributo de firma.
+
+#### 3. Desfase de Ciclos Lectivos
+
+* **Riesgo:** Una propuesta que abarca más de un ciclo lectivo.
+* **Validación:** El sistema debe tomar la autoridad vigente al momento de la **emisión** del certificado, o según la configuración específica de la Propuesta Académica si requiere la autoridad del año de cursada.
+
+---
+
+
+## Certificados
+
+La entidad **Certificado** es el documento oficial que acredita la culminación de una trayectoria académica. Su generación es un proceso derivado que consolida la información del alumno, la propuesta y las autoridades vigentes.
+
+### Requisitos de Emisión
+
+La generación de un certificado está sujeta a una validación estricta de estados tanto en la inscripción como en el registro del alumno:
+
+1. **Estado de la Inscripción:** Únicamente las inscripciones en estado **"Finalizada"** son elegibles para la emisión de certificados.
+* **Bloqueo de Seguridad:** El sistema debe impedir la creación de certificados para inscripciones en estado **"Activa"** o **"Baja"**.
+
+
+2. **Condición del Alumno:** Se realiza una verificación de integridad administrativa sobre el Alumno.
+* **Restricción por Sanción:** Si el alumno se encuentra en estado **"Bloqueado"** o **"Suspendido"**, el sistema debe inhabilitar la generación de cualquier certificado hasta que su situación sea regularizada.
+
+
+
+### Composición y Plantillas
+
+El certificado se comporta como una entidad dinámica basada en plantillas institucionales:
+
+* **Inalterabilidad de la Propuesta:** Una vez iniciado el proceso de certificación, la **Propuesta Académica** asociada es inmutable. No se permite el cambio de propuesta dentro de un mismo certificado.
+* **Automatización de Datos:** El sistema utiliza la información del **Alumno** y la **Propuesta** para completar automáticamente una plantilla predefinida.
+* **Integración de Firmas:** El documento recupera las **Autoridades** vinculadas a la Unidad Académica y Ciclo Lectivo correspondientes, posicionándolas según su **Orden de Firma** y siempre que tengan activo el permiso de firma.
+
+### Gestión de Cambios e Historial
+
+Para asegurar la trazabilidad y la seguridad documental, el sistema implementa las siguientes reglas de persistencia:
+
+* **Edición Controlada:** Se permite la edición de información textual dentro del certificado, pero cualquier modificación dispara un evento de versionado.
+* **Historial de Cambios:** Cada vez que un certificado es generado o modificado, el sistema debe almacenar una copia del registro anterior. Esto permite mantener una auditoría completa de las versiones previas antes de la última modificación.
+* **Salida Digital:** El resultado final de este proceso es la generación y guardado de un archivo en formato **PDF**, el cual debe ser consistente con la última versión registrada en el historial.
+
+---
+
+### Validación de Irregularidades y Casos de Borde
+
+#### 1. Desincronización de Datos del Alumno
+
+* **Escenario:** El alumno cambia su nombre o DNI (por rectificación legal) después de que se generó un certificado.
+* **Regla:** El sistema debe permitir la regeneración del certificado para reflejar los datos actuales del alumno, almacenando la versión anterior en el historial para auditoría.
+
+#### 2. Ausencia de Autoridades para el Ciclo
+
+* **Riesgo:** Una inscripción finaliza en un Ciclo Lectivo que no tiene autoridades parametrizadas.
+* **Acción:** El sistema debe notificar al administrador la ausencia de autoridades firmantes antes de permitir la generación del PDF.
+
+#### 3. Intentos de Fraude por Cambio de Estado
+
+* **Situación:** Se intenta emitir un certificado y, en el milisegundo previo, el alumno es **Bloqueado**.
+* **Solución:** El servicio de generación de PDF debe realizar una validación de estado del Alumno *justo antes* de la firma digital o guardado del archivo (validación *just-in-time*).
+
+---

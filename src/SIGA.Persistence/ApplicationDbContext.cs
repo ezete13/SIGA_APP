@@ -5,7 +5,7 @@ using SIGA.Domain.Entities;
 
 namespace SIGA.Persistence;
 
-public partial class ApplicationDbContext : IdentityDbContext<Usuario>
+public partial class ApplicationDbContext : DbContext
 {
     public ApplicationDbContext() { }
 
@@ -13,8 +13,7 @@ public partial class ApplicationDbContext : IdentityDbContext<Usuario>
         : base(options) { }
 
     public virtual DbSet<Unidad> Unidades { get; set; }
-    public virtual DbSet<Usuario> Usuarios { get; set; }
-    
+
     /*
     public virtual DbSet<Autoridad> Autoridades { get; set; }
     

@@ -1,6 +1,7 @@
-﻿using SIGA.Domain.Exceptions;
+﻿using SIGA.Domain.Entities.Catalog.Static;
+using SIGA.Domain.Exceptions;
 
-namespace SIGA.Domain.Entities;
+namespace SIGA.Domain.Entities.Core;
 
 public partial class Certificado
 {
@@ -33,9 +34,6 @@ public partial class Certificado
     public virtual required Alumno Alumno { get; set; }
     public virtual required Inscripcion Inscripcion { get; set; }
     public virtual required CertificadoEstado CertificadoEstado { get; set; }
-
-    public virtual ICollection<CertificadoHistorial> CertificadoHistorial { get; set; } =
-        new List<CertificadoHistorial>();
 
     public static Certificado Crear(
         Inscripcion inscripcion,
@@ -90,18 +88,5 @@ public partial class Certificado
     )
     {
         CertificadoEstadoId = nuevoEstado.Id;
-
-        CertificadoHistorial.Add(
-            new CertificadoHistorial
-            {
-                CertificadoId = Id,
-                CertificadoEstadoId = nuevoEstado.Id,
-                UsuarioId = usuarioId,
-                Certificado = this,
-                CertificadoEstado = nuevoEstado,
-                Observacion = observacion,
-                Ip = ip,
-            }
-        );
     }
 }

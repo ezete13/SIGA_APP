@@ -11,6 +11,7 @@ public class AlumnoEstadoConfiguration : IEntityTypeConfiguration<AlumnoEstado>
         ConfigureTable(builder);
         ConfigureProperties(builder);
         ConfigureIndexes(builder);
+        ConfigureRelationships(builder);
         ConfigureSeeds(builder);
     }
 
@@ -87,7 +88,7 @@ public class AlumnoEstadoConfiguration : IEntityTypeConfiguration<AlumnoEstado>
     private static void ConfigureSeeds(EntityTypeBuilder<AlumnoEstado> builder)
     {
         builder.HasData(
-            new PreinscripcionEstado
+            new AlumnoEstado
             {
                 Id = 1,
                 Codigo = "ACTIVO",
@@ -95,7 +96,7 @@ public class AlumnoEstadoConfiguration : IEntityTypeConfiguration<AlumnoEstado>
                 Descripcion = "Alumno con al menos una inscripción activa",
                 Activo = true,
             },
-            new PreinscripcionEstado
+            new AlumnoEstado
             {
                 Id = 2,
                 Codigo = "INACTIVO",
@@ -103,7 +104,7 @@ public class AlumnoEstadoConfiguration : IEntityTypeConfiguration<AlumnoEstado>
                 Descripcion = "Alumno con ninguna inscripción activa",
                 Activo = true,
             },
-            new PreinscripcionEstado
+            new AlumnoEstado
             {
                 Id = 3,
                 Codigo = "BLOQUEADO",
@@ -111,7 +112,7 @@ public class AlumnoEstadoConfiguration : IEntityTypeConfiguration<AlumnoEstado>
                 Descripcion = "Alumno que no puede obtener ninguna inscripción",
                 Activo = false,
             },
-            new PreinscripcionEstado
+            new AlumnoEstado
             {
                 Id = 4,
                 Codigo = "SUSPENDIDO",

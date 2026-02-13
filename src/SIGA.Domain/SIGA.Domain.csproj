@@ -7,4 +7,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="10.0.2" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Entities\DynamicCatalog\" />
+    <Folder Include="Entities\StaticCatalog\" />
+  </ItemGroup>
 </Project>

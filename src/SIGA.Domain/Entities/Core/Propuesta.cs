@@ -1,4 +1,7 @@
-﻿namespace SIGA.Domain.Entities;
+﻿using SIGA.Domain.Entities.Catalog.Dynamic;
+using SIGA.Domain.Entities.Catalog.Static;
+
+namespace SIGA.Domain.Entities.Core;
 
 public partial class Propuesta
 {
@@ -78,9 +81,5 @@ public partial class Propuesta
     public virtual ICollection<PropuestaDocente> PropuestaDocentes { get; set; } =
         new List<PropuestaDocente>();
 
-    public virtual ICollection<PropuestaContenido> PropuestaContenidos { get; set; } =
-        new List<PropuestaContenido>();
-
-    public virtual ICollection<PropuestaHistorial> HistorialPropuesta { get; set; } =
-        new List<PropuestaHistorial>();
+    public virtual ICollection<Temario> PropuestaContenidos { get; set; } = new List<Temario>();
 }

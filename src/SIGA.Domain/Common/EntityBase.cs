@@ -1,6 +1,6 @@
-﻿namespace SIGA.Domain.Entities;
+namespace SIGA.Domain.Common;
 
-public partial class Modalidad
+public partial class EntityBase
 {
     public int Id { get; set; }
 
@@ -11,6 +11,4 @@ public partial class Modalidad
     public required string? Descripcion { get; set; }
 
     public bool Activo { get; set; } = true;
-
-    public virtual ICollection<Propuesta> Propuestas { get; set; } = new List<Propuesta>();
 }

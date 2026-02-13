@@ -1,6 +1,6 @@
-namespace SIGA.Domain.Entities;
+namespace SIGA.Domain.Entities.Core;
 
-public class PropuestaContenido
+public class Temario
 {
     public int Id { get; set; }
 

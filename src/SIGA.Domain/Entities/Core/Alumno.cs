@@ -1,6 +1,7 @@
+using SIGA.Domain.Entities.Catalog.Static;
 using SIGA.Domain.Enums;
 
-namespace SIGA.Domain.Entities;
+namespace SIGA.Domain.Entities.Core;
 
 public class Alumno
 {

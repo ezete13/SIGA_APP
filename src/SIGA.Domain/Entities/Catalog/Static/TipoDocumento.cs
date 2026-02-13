@@ -1,11 +1,10 @@
-﻿namespace SIGA.Domain.Entities;
+﻿using SIGA.Domain.Common;
+using SIGA.Domain.Entities.Core;
 
-public partial class TipoDocumento
+namespace SIGA.Domain.Entities.Catalog.Static;
+
+public partial class TipoDocumento : EntityBase
 {
-    public int Id { get; set; }
-
-    public required string Nombre { get; set; }
-
     public virtual ICollection<Alumno> Alumnos { get; set; } = new List<Alumno>();
 
     public virtual ICollection<Preinscripcion> Preinscripciones { get; set; } =

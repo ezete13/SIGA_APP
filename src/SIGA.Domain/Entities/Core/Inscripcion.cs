@@ -1,7 +1,8 @@
-﻿using SIGA.Domain.Enums;
+﻿using SIGA.Domain.Entities.Catalog.Static;
+using SIGA.Domain.Enums;
 using SIGA.Domain.Exceptions;
 
-namespace SIGA.Domain.Entities;
+namespace SIGA.Domain.Entities.Core;
 
 public class Inscripcion
 {
