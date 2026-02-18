@@ -1,7 +1,8 @@
 ﻿using System.Reflection;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using SIGA.Domain.Entities;
+using SIGA.Domain.Entities.Catalog.Dynamic;
+using SIGA.Domain.Entities.Catalog.Static;
+using SIGA.Domain.Entities.Core;
 
 namespace SIGA.Persistence;
 
@@ -12,44 +13,31 @@ public partial class ApplicationDbContext : DbContext
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options) { }
 
+    // Catalog - Static (Enums/tablas fijas)
+    public virtual DbSet<AlumnoEstado> AlumnoEstados { get; set; }
+    public virtual DbSet<CertificadoEstado> CertificadoEstados { get; set; }
+    public virtual DbSet<InscripcionEstado> InscripcionEstados { get; set; }
+    public virtual DbSet<PreinscripcionEstado> PreinscripcionEstados { get; set; }
+    public virtual DbSet<PropuestaEstado> PropuestaEstados { get; set; }
+    public virtual DbSet<TipoDocumento> TiposDocumento { get; set; }
+
+    // Catalog - Dynamic (Catálogos editables)
+    public virtual DbSet<Modalidad> Modalidades { get; set; }
+    public virtual DbSet<PeriodoLectivo> PeriodosLectivos { get; set; }
+    public virtual DbSet<TipoPropuesta> TiposPropuesta { get; set; }
     public virtual DbSet<Unidad> Unidades { get; set; }
 
-    /*
+    // Core (Entidades principales del negocio)
+    public virtual DbSet<Alumno> Alumnos { get; set; }
     public virtual DbSet<Autoridad> Autoridades { get; set; }
-    
-    public virtual DbSet<CertificacionAutoridad> CertificacionAutoridad { get; set; }
-    public virtual DbSet<Certificaciones> Certificaciones { get; set; }
-    public virtual DbSet<Docentes> Docentes { get; set; }
-    public virtual DbSet<HistorialEstadoCertificaciones> HistorialEstadoCertificaciones { get; set; }
-    public virtual DbSet<HistorialEstadoInscripciones> HistorialEstadoInscripciones { get; set; }
-    public virtual DbSet<HistorialEstadoPropuestas> HistorialEstadoPropuestas { get; set; }
-    public virtual DbSet<IdentityRoleClaim> IdentityRoleClaims { get; set; }
-    public virtual DbSet<IdentityRoles> IdentityRoles { get; set; }
-    public virtual DbSet<IdentityUserClaims> IdentityUserClaims { get; set; }
-    public virtual DbSet<IdentityUsuarioLogin> IdentityUserLogins { get; set; }
-    public virtual DbSet<IdentityUsuarioToken> IdentityUserTokens { get; set; }
-    public virtual DbSet<IdentityUsers> IdentityUsers { get; set; }
-    public virtual DbSet<Inscripciones> Inscripciones { get; set; }
-    public virtual DbSet<Modalidades> Modalidades { get; set; }
-    public virtual DbSet<Modulo> Modulos { get; set; }
-    public virtual DbSet<PeriodosLectivos> PeriodosLectivos { get; set; }
-    public virtual DbSet<Portales> Portales { get; set; }
-    public virtual DbSet<PropuestaAuspiciantes> PropuestaAuspiciantes { get; set; }
-    public virtual DbSet<PropuestaContactos> PropuestaContactos { get; set; }
-    public virtual DbSet<PropuestaDocente> PropuestaDocente { get; set; }
-    public virtual DbSet<PropuestaPagosInfo> PropuestaPagosInfo { get; set; }
-    public virtual DbSet<PropuestaPlanItems> PropuestaPlanItems { get; set; }
-    public virtual DbSet<PropuestaPlanModulos> PropuestaPlanModulos { get; set; }
-    public virtual DbSet<Propuestas> Propuestas { get; set; }
-    public virtual DbSet<Sedes> Sedes { get; set; }
-    public virtual DbSet<TiposDocumento> TiposDocumento { get; set; }
-    public virtual DbSet<TiposEstadoCertificado> TiposEstadoCertificado { get; set; }
-    public virtual DbSet<TiposEstadoInscripcion> TiposEstadoInscripcion { get; set; }
-    public virtual DbSet<TiposEstadoPropuesta> TiposEstadoPropuesta { get; set; }
-    public virtual DbSet<TiposPropuesta> TiposPropuesta { get; set; }
-    
-    public virtual DbSet<UsuarioPermisosUnidad> UsuarioPermisosUnidad { get; set; }
-    */
+    public virtual DbSet<Certificado> Certificados { get; set; }
+    public virtual DbSet<Docente> Docentes { get; set; }
+    public virtual DbSet<Inscripcion> Inscripciones { get; set; }
+    public virtual DbSet<Preinscripcion> Preinscripciones { get; set; }
+    public virtual DbSet<Propuesta> Propuestas { get; set; }
+    public virtual DbSet<PropuestaDocente> PropuestaDocentes { get; set; }
+    public virtual DbSet<PropuestaWeb> PropuestasWeb { get; set; }
+    public virtual DbSet<Temario> Temarios { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

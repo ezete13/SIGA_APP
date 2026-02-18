@@ -38,6 +38,8 @@ public class Inscripcion
 
     public virtual Preinscripcion? Preinscripcion { get; set; }
 
+    public virtual ICollection<Certificado> Certificados { get; set; } = new List<Certificado>();
+
     // Método de Fábrica: Asegura que toda inscripción nazca de una preinscripción aprobada
     public static Inscripcion CrearDesdePreinscripcion(Preinscripcion preinscripcion, int alumnoId)
     {

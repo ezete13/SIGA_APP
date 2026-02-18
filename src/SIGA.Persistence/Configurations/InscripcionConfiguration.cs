@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SIGA.Domain.Entities;
+using SIGA.Domain.Entities.Core;
 
 namespace SIGA.Infrastructure.Data.Configurations;
 
@@ -12,17 +12,16 @@ public class InscripcionConfiguration : IEntityTypeConfiguration<Inscripcion>
         ConfigureProperties(builder);
         ConfigureIndexes(builder);
         ConfigureRelationships(builder);
+        ConfigureQueryFilters(builder);
+        // No hay seeds para Inscripcion
     }
 
     private static void ConfigureTable(EntityTypeBuilder<Inscripcion> builder)
     {
         builder.ToTable(
-            "inscripcion",
+            "inscripciones",
             "siga",
-            tb =>
-                tb.HasComment(
-                    "Registro de inscripciones definitivas de alumnos a propuestas educativas"
-                )
+            tb => tb.HasComment("Registro de inscripciones de alumnos a propuestas académicas")
         );
 
         builder.HasKey(e => e.Id).HasName("pk_inscripcion");
@@ -30,124 +29,151 @@ public class InscripcionConfiguration : IEntityTypeConfiguration<Inscripcion>
 
     private static void ConfigureProperties(EntityTypeBuilder<Inscripcion> builder)
     {
+        // ID - PostgreSQL usa serial/identity
         builder
             .Property(e => e.Id)
             .HasColumnName("id")
-            .UseIdentityColumn()
+            .UseIdentityAlwaysColumn()
             .HasComment("Identificador único de la inscripción.");
 
+        // UUID - PostgreSQL usa gen_random_uuid()
         builder
             .Property(e => e.Uuid)
             .HasColumnName("uuid")
-            .HasDefaultValueSql("NEWID()")
+            .HasDefaultValueSql("gen_random_uuid()")
             .IsRequired()
-            .HasComment("Identificador único universal para exposición pública.");
+            .HasColumnType("uuid")
+            .HasComment("UUID único para identificación universal de la inscripción.");
 
+        // Foreign Keys requeridas
         builder
             .Property(e => e.AlumnoId)
             .HasColumnName("alumno_id")
             .IsRequired()
-            .HasComment("ID del alumno que se inscribe.");
+            .HasColumnType("integer")
+            .HasComment("ID del alumno inscrito (FK a alumnos.id).");
 
         builder
             .Property(e => e.PropuestaId)
             .HasColumnName("propuesta_id")
             .IsRequired()
-            .HasComment("ID de la propuesta educativa a la que se inscribe.");
+            .HasColumnType("integer")
+            .HasComment("ID de la propuesta académica (FK a propuestas.id).");
 
         builder
             .Property(e => e.InscripcionEstadoId)
             .HasColumnName("inscripcion_estado_id")
             .IsRequired()
-            .HasComment("ID del estado actual de la inscripción (Activa, Finalizada, Baja).");
+            .HasColumnType("integer")
+            .HasComment("ID del estado de la inscripción (FK a inscripcion_estados.id).");
 
+        // Foreign Key opcional
         builder
             .Property(e => e.PreinscripcionId)
             .HasColumnName("preinscripcion_id")
-            .IsRequired(false)
-            .HasComment("ID de la preinscripción que dio origen a esta inscripción.");
+            .HasColumnType("integer")
+            .HasComment(
+                "ID de la preinscripción que originó la inscripción (FK a preinscripciones.id)."
+            );
 
+        // Fechas
         builder
             .Property(e => e.FechaInscripcion)
             .HasColumnName("fecha_inscripcion")
-            .HasColumnType("datetime2")
             .IsRequired()
-            .HasComment("Fecha y hora UTC en que se realizó la inscripción.");
+            .HasColumnType("timestamp with time zone")
+            .HasComment("Fecha y hora de la inscripción.");
 
+        // Información de baja
         builder
             .Property(e => e.EsBaja)
             .HasColumnName("es_baja")
-            .IsRequired()
             .HasDefaultValue(false)
+            .IsRequired()
+            .HasColumnType("boolean")
             .HasComment("Indica si la inscripción fue dada de baja.");
 
         builder
             .Property(e => e.FechaBaja)
             .HasColumnName("fecha_baja")
-            .HasColumnType("datetime2")
-            .IsRequired(false)
-            .HasComment("Fecha y hora UTC en que se dio de baja la inscripción.");
+            .HasColumnType("timestamp with time zone")
+            .HasComment("Fecha y hora de la baja (si aplica).");
 
         builder
             .Property(e => e.MotivoBaja)
             .HasColumnName("motivo_baja")
             .HasMaxLength(500)
-            .IsRequired(false)
-            .HasComment("Motivo por el cual se dio de baja la inscripción.");
+            .HasColumnType("varchar(500)")
+            .HasComment("Motivo de la baja de inscripción.");
 
+        // Auditoría
         builder
             .Property(e => e.CreadoEn)
             .HasColumnName("creado_en")
-            .HasColumnType("datetime2")
-            .HasDefaultValueSql("GETUTCDATE()")
+            .HasDefaultValueSql("CURRENT_TIMESTAMP")
             .IsRequired()
-            .HasComment("Fecha y hora UTC de creación del registro.");
+            .HasColumnType("timestamp with time zone")
+            .HasComment("Fecha y hora de creación del registro.");
 
         builder
             .Property(e => e.ActualizadoEn)
             .HasColumnName("actualizado_en")
-            .HasColumnType("datetime2")
-            .IsRequired(false)
-            .HasComment("Fecha y hora UTC de la última actualización.");
+            .HasColumnType("timestamp with time zone")
+            .HasComment("Fecha y hora de la última actualización del registro.");
     }
 
     private static void ConfigureIndexes(EntityTypeBuilder<Inscripcion> builder)
     {
-        // Índice único para UUID
-        builder.HasIndex(e => e.Uuid).HasDatabaseName("ix_inscripciones_uuid").IsUnique();
+        // Índices únicos
+        builder.HasIndex(e => e.Uuid).IsUnique().HasDatabaseName("uk_inscripciones_uuid");
 
-        // Índice compuesto para búsqueda por alumno y propuesta
+        // Índice único compuesto para evitar duplicados de alumno en misma propuesta (solo activas)
         builder
             .HasIndex(e => new { e.AlumnoId, e.PropuestaId })
-            .HasDatabaseName("ix_inscripciones_alumno_propuesta")
-            .IsUnique(); // Un alumno no puede inscribirse dos veces a la misma propuesta
+            .IsUnique()
+            .HasDatabaseName("uk_inscripciones_alumno_propuesta")
+            .HasFilter("inscripcion_estado_id = 1"); // Asumiendo que 1 = Activa
 
-        // Índice para búsqueda por estado
-        builder.HasIndex(e => e.InscripcionEstadoId).HasDatabaseName("ix_inscripciones_estado_id");
+        // Índices para búsquedas frecuentes
+        builder.HasIndex(e => e.AlumnoId).HasDatabaseName("ix_inscripciones_alumno");
 
-        // Índice para búsqueda por preinscripción
+        builder.HasIndex(e => e.PropuestaId).HasDatabaseName("ix_inscripciones_propuesta");
+
+        builder.HasIndex(e => e.InscripcionEstadoId).HasDatabaseName("ix_inscripciones_estado");
+
         builder
             .HasIndex(e => e.PreinscripcionId)
-            .HasDatabaseName("ix_inscripciones_preinscripcion_id")
-            .IsUnique()
-            .HasFilter("preinscripcion_id IS NOT NULL"); // Una preinscripción solo genera una inscripción
+            .HasDatabaseName("ix_inscripciones_preinscripcion")
+            .HasFilter("preinscripcion_id IS NOT NULL");
 
-        // Índice para búsqueda por fecha de inscripción
+        // Índices compuestos para consultas comunes
+        builder
+            .HasIndex(e => new { e.AlumnoId, e.InscripcionEstadoId })
+            .HasDatabaseName("ix_inscripciones_alumno_estado");
+
+        builder
+            .HasIndex(e => new { e.PropuestaId, e.InscripcionEstadoId })
+            .HasDatabaseName("ix_inscripciones_propuesta_estado");
+
+        builder
+            .HasIndex(e => new { e.FechaInscripcion, e.InscripcionEstadoId })
+            .HasDatabaseName("ix_inscripciones_fecha_estado");
+
+        // Índices de filtro
+        builder
+            .HasIndex(e => e.EsBaja)
+            .HasDatabaseName("ix_inscripciones_es_baja")
+            .HasFilter("es_baja = true");
+
+        builder
+            .HasIndex(e => e.FechaBaja)
+            .HasDatabaseName("ix_inscripciones_fecha_baja")
+            .HasFilter("fecha_baja IS NOT NULL");
+
+        // Índice para búsqueda por rango de fechas
         builder
             .HasIndex(e => e.FechaInscripcion)
             .HasDatabaseName("ix_inscripciones_fecha_inscripcion");
-
-        // Índice para búsqueda de bajas
-        builder
-            .HasIndex(e => new { e.EsBaja, e.FechaBaja })
-            .HasDatabaseName("ix_inscripciones_bajas")
-            .HasFilter("es_baja = 1");
-
-        // Índice compuesto para vigencia (estado Activa)
-        builder
-            .HasIndex(e => new { e.AlumnoId, e.InscripcionEstadoId })
-            .HasDatabaseName("ix_inscripciones_alumno_vigente")
-            .HasFilter("inscripcion_estado_id = 1"); // Solo inscripciones activas
     }
 
     private static void ConfigureRelationships(EntityTypeBuilder<Inscripcion> builder)
@@ -157,31 +183,38 @@ public class InscripcionConfiguration : IEntityTypeConfiguration<Inscripcion>
             .HasOne(e => e.Alumno)
             .WithMany(a => a.Inscripciones)
             .HasForeignKey(e => e.AlumnoId)
-            .HasConstraintName("fk_inscripciones_alumnos_alumno_id")
-            .OnDelete(DeleteBehavior.Restrict); // No permitir eliminar alumnos con inscripciones
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("fk_inscripciones_alumno");
 
         // Relación con Propuesta
         builder
             .HasOne(e => e.Propuesta)
             .WithMany(p => p.Inscripciones)
             .HasForeignKey(e => e.PropuestaId)
-            .HasConstraintName("fk_inscripciones_propuestas_propuesta_id")
-            .OnDelete(DeleteBehavior.Restrict); // No permitir eliminar propuestas con inscripciones
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("fk_inscripciones_propuesta");
 
-        // Relación con EstadoInscripcion
+        // Relación con InscripcionEstado
         builder
             .HasOne(e => e.InscripcionEstado)
-            .WithMany(ei => ei.Inscripciones)
+            .WithMany(ie => ie.Inscripciones)
             .HasForeignKey(e => e.InscripcionEstadoId)
-            .HasConstraintName("fk_inscripciones_estados_inscripcion_estado_id")
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("fk_inscripciones_estado");
 
-        // Relación con Preinscripcion (opcional)
+        // Relación con Certificados
         builder
-            .HasOne(e => e.Preinscripcion)
-            .WithOne(p => p.Inscripcion) // Asumiendo que Preinscripcion tiene propiedad de navegación Inscripcion
-            .HasForeignKey<Inscripcion>(e => e.PreinscripcionId)
-            .HasConstraintName("fk_inscripciones_preinscripciones_preinscripcion_id")
-            .OnDelete(DeleteBehavior.Restrict); // No permitir eliminar preinscripciones con inscripciones
+            .HasMany(e => e.Certificados)
+            .WithOne(c => c.Inscripcion)
+            .HasForeignKey(c => c.InscripcionId)
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("fk_inscripciones_certificados");
+    }
+
+    private static void ConfigureQueryFilters(EntityTypeBuilder<Inscripcion> builder)
+    {
+        // Filtro global: excluir inscripciones marcadas como baja lógica
+        // Nota: Comentado porque puede no ser deseable en todos los casos
+        // builder.HasQueryFilter(e => !e.EsBaja);
     }
 }

@@ -69,7 +69,7 @@ public partial class Propuesta
 
     public virtual required TipoPropuesta TipoPropuesta { get; set; }
 
-    public virtual required EstadoPropuesta EstadoPropuesta { get; set; }
+    public virtual required PropuestaEstado PropuestaEstado { get; set; }
 
     public virtual PropuestaWeb? PropuestaWeb { get; set; }
 

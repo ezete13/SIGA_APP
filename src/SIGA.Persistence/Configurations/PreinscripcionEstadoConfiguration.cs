@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SIGA.Domain.Entities;
+using SIGA.Domain.Entities.Catalog.Static;
 
 namespace SIGA.Infrastructure.Data.Configurations;
 
@@ -75,7 +75,7 @@ public class PreinscripcionEstadoConfiguration : IEntityTypeConfiguration<Preins
         builder
             .HasIndex(e => e.Activo)
             .HasDatabaseName("ix_estados_preinscripcion_activo")
-            .HasFilter("activo = 1");
+            .HasFilter("activo = true");
     }
 
     private static void ConfigureRelationships(EntityTypeBuilder<PreinscripcionEstado> builder)
@@ -84,7 +84,7 @@ public class PreinscripcionEstadoConfiguration : IEntityTypeConfiguration<Preins
             .HasMany(e => e.Preinscripciones)
             .WithOne(i => i.PreinscripcionEstado)
             .HasForeignKey(i => i.EstadoPreinscripcionId)
-            .HasConstraintName("fk_estados_inscripcion_inscripciones")
+            .HasConstraintName("fk_estados_preinscripcion_preinscripciones")
             .OnDelete(DeleteBehavior.Restrict);
     }
 
@@ -95,7 +95,7 @@ public class PreinscripcionEstadoConfiguration : IEntityTypeConfiguration<Preins
             new PreinscripcionEstado
             {
                 Id = 1,
-                Codigo = "EN_ESPERA",
+                Codigo = "ESP",
                 Nombre = "En Espera",
                 Descripcion = "Preinscripción pendiente de revisión",
                 Activo = true,
@@ -103,7 +103,7 @@ public class PreinscripcionEstadoConfiguration : IEntityTypeConfiguration<Preins
             new PreinscripcionEstado
             {
                 Id = 2,
-                Codigo = "APROBADA",
+                Codigo = "APR",
                 Nombre = "Aprobada",
                 Descripcion = "Preinscripción aprobada y convertida a alumno",
                 Activo = true,
@@ -111,7 +111,7 @@ public class PreinscripcionEstadoConfiguration : IEntityTypeConfiguration<Preins
             new PreinscripcionEstado
             {
                 Id = 3,
-                Codigo = "REVOCADA",
+                Codigo = "REV",
                 Nombre = "Revocada",
                 Descripcion = "Preinscripción rechazada o cancelada",
                 Activo = false,
@@ -119,7 +119,7 @@ public class PreinscripcionEstadoConfiguration : IEntityTypeConfiguration<Preins
             new PreinscripcionEstado
             {
                 Id = 4,
-                Codigo = "EXPIRADA",
+                Codigo = "EXP",
                 Nombre = "Expirada",
                 Descripcion = "Preinscripción no procesada dentro del plazo establecido",
                 Activo = false,

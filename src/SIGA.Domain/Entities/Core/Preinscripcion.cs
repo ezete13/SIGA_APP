@@ -16,6 +16,8 @@ public class Preinscripcion
 
     public required int EstadoPreinscripcionId { get; set; }
 
+    public required int TipoDocumentoId { get; set; }
+
     public required string Documento { get; set; }
 
     public required string Apellido { get; set; }
@@ -35,13 +37,14 @@ public class Preinscripcion
     public virtual Propuesta Propuesta { get; set; } = null!;
 
     public virtual Inscripcion Inscripcion { get; set; } = null!;
-
+    public virtual TipoDocumento TipoDocumento { get; set; } = null!;
     public virtual PreinscripcionEstado PreinscripcionEstado { get; set; } = null!;
 
     public virtual Alumno? Alumno { get; set; }
 
     public static Preinscripcion Crear(
         int propuestaId,
+        int tipoDocumentoId,
         string documento,
         string apellido,
         string nombre,
@@ -53,6 +56,7 @@ public class Preinscripcion
             Uuid = Guid.NewGuid(),
             PropuestaId = propuestaId,
             EstadoPreinscripcionId = (int)EstadoPreinscripcionEnum.EnEspera,
+            TipoDocumentoId = tipoDocumentoId,
             Documento = documento,
             Apellido = apellido,
             Nombre = nombre,

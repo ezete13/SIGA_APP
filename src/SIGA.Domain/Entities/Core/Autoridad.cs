@@ -1,4 +1,6 @@
-﻿namespace SIGA.Domain.Entities.Core;
+﻿using SIGA.Domain.Entities.Catalog.Dynamic;
+
+namespace SIGA.Domain.Entities.Core;
 
 public partial class Autoridad
 {

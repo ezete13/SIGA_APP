@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SIGA.Domain.Entities;
+using SIGA.Domain.Entities.Catalog.Static;
 
 namespace SIGA.Infrastructure.Data.Configurations;
 
@@ -66,6 +66,13 @@ public class InscripcionEstadoConfiguration : IEntityTypeConfiguration<Inscripci
     private static void ConfigureIndexes(EntityTypeBuilder<InscripcionEstado> builder)
     {
         builder.HasIndex(e => e.Codigo).HasDatabaseName("ix_estados_inscripcion_codigo").IsUnique();
+
+        builder.HasIndex(e => e.Nombre).HasDatabaseName("ix_estados_inscripcion_nombre");
+
+        builder
+            .HasIndex(e => e.Activo)
+            .HasDatabaseName("ix_estados_inscripcion_activo")
+            .HasFilter("activo = true");
     }
 
     private static void ConfigureRelationships(EntityTypeBuilder<InscripcionEstado> builder)
@@ -84,7 +91,7 @@ public class InscripcionEstadoConfiguration : IEntityTypeConfiguration<Inscripci
             new InscripcionEstado
             {
                 Id = 1,
-                Codigo = "ACTIVA",
+                Codigo = "ACT",
                 Nombre = "Activa",
                 Descripcion = "Inscripción vigente con cursada regular",
                 Activo = true,
@@ -92,7 +99,7 @@ public class InscripcionEstadoConfiguration : IEntityTypeConfiguration<Inscripci
             new InscripcionEstado
             {
                 Id = 2,
-                Codigo = "FINALIZADA",
+                Codigo = "FIN",
                 Nombre = "Finalizada",
                 Descripcion = "Inscripción completada exitosamente",
                 Activo = true,

@@ -4,9 +4,9 @@ using SIGA.Domain.Entities.Catalog.Static;
 
 namespace SIGA.Infrastructure.Data.Configurations;
 
-public class AlumnoEstadoConfiguration : IEntityTypeConfiguration<AlumnoEstado>
+public class PropuestaEstadoConfiguration : IEntityTypeConfiguration<PropuestaEstado>
 {
-    public void Configure(EntityTypeBuilder<AlumnoEstado> builder)
+    public void Configure(EntityTypeBuilder<PropuestaEstado> builder)
     {
         ConfigureTable(builder);
         ConfigureProperties(builder);
@@ -15,18 +15,18 @@ public class AlumnoEstadoConfiguration : IEntityTypeConfiguration<AlumnoEstado>
         ConfigureSeeds(builder);
     }
 
-    private static void ConfigureTable(EntityTypeBuilder<AlumnoEstado> builder)
+    private static void ConfigureTable(EntityTypeBuilder<PropuestaEstado> builder)
     {
         builder.ToTable(
-            "alumno_estados",
+            "propuesta_estados",
             "siga",
-            tb => tb.HasComment("Registro principal de estados de alumnos")
+            tb => tb.HasComment("Registro principal de estados de Propuestas")
         );
 
-        builder.HasKey(e => e.Id).HasName("pk_alumno_estado");
+        builder.HasKey(e => e.Id).HasName("pk_propuesta_estado");
     }
 
-    private static void ConfigureProperties(EntityTypeBuilder<AlumnoEstado> builder)
+    private static void ConfigureProperties(EntityTypeBuilder<PropuestaEstado> builder)
     {
         builder
             .Property(e => e.Id)
@@ -63,61 +63,55 @@ public class AlumnoEstadoConfiguration : IEntityTypeConfiguration<AlumnoEstado>
             .HasComment("Indica si el estado está disponible");
     }
 
-    private static void ConfigureIndexes(EntityTypeBuilder<AlumnoEstado> builder)
+    private static void ConfigureIndexes(EntityTypeBuilder<PropuestaEstado> builder)
     {
-        builder.HasIndex(e => e.Codigo).HasDatabaseName("ix_estados_alumno_codigo").IsUnique();
+        builder.HasIndex(e => e.Codigo).HasDatabaseName("ix_estados_propuesta_codigo").IsUnique();
 
-        builder.HasIndex(e => e.Nombre).HasDatabaseName("ix_estados_alumno_nombre");
+        builder.HasIndex(e => e.Nombre).HasDatabaseName("ix_estados_propuesta_nombre");
 
         builder
             .HasIndex(e => e.Activo)
-            .HasDatabaseName("ix_estados_alumno_activo")
+            .HasDatabaseName("ix_estados_propuesta_activo")
             .HasFilter("activo = true");
     }
 
-    private static void ConfigureRelationships(EntityTypeBuilder<AlumnoEstado> builder)
+    private static void ConfigureRelationships(EntityTypeBuilder<PropuestaEstado> builder)
     {
         builder
-            .HasMany(e => e.Alumnos)
-            .WithOne(i => i.AlumnoEstado)
-            .HasForeignKey(i => i.AlumnoEstadoId)
-            .HasConstraintName("fk_estados_alumno_alumnos")
+            .HasMany(e => e.Propuestas)
+            .WithOne(i => i.PropuestaEstado)
+            .HasForeignKey(i => i.EstadoPropuestaId)
+            .HasConstraintName("fk_estados_propuesta_propuestas")
             .OnDelete(DeleteBehavior.Restrict);
     }
 
-    private static void ConfigureSeeds(EntityTypeBuilder<AlumnoEstado> builder)
+    private static void ConfigureSeeds(EntityTypeBuilder<PropuestaEstado> builder)
     {
+        // Seed data for enum values
         builder.HasData(
-            new AlumnoEstado
+            new PropuestaEstado
             {
                 Id = 1,
-                Codigo = "ACT",
-                Nombre = "Activo",
-                Descripcion = "Alumno con al menos una inscripción activa",
+                Codigo = "BOR",
+                Nombre = "Borrador",
+                Descripcion = "Propuesta provisoria no disponible para inscripción",
                 Activo = true,
             },
-            new AlumnoEstado
+            new PropuestaEstado
             {
                 Id = 2,
-                Codigo = "INA",
-                Nombre = "Inactivo",
-                Descripcion = "Alumno con ninguna inscripción activa",
+                Codigo = "PUB",
+                Nombre = "Publicada",
+                Descripcion = "Propuesta disponible para inscripcion y vista web",
                 Activo = true,
             },
-            new AlumnoEstado
+            new PropuestaEstado
             {
                 Id = 3,
-                Codigo = "BLO",
-                Nombre = "Bloqueado",
-                Descripcion = "Alumno que no puede obtener ninguna inscripción",
-                Activo = false,
-            },
-            new AlumnoEstado
-            {
-                Id = 4,
-                Codigo = "SUS",
-                Nombre = "Suspendido",
-                Descripcion = "Alumno suspendido temporalmente",
+                Codigo = "ARCH",
+                Nombre = "Archivada",
+                Descripcion =
+                    "Propuesta no permite vista web ni inscripciones. Vale para certificados",
                 Activo = false,
             }
         );
