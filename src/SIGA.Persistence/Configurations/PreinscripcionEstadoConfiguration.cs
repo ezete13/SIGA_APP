@@ -95,8 +95,8 @@ public class PreinscripcionEstadoConfiguration : IEntityTypeConfiguration<Preins
             new PreinscripcionEstado
             {
                 Id = 1,
-                Codigo = "ESP",
-                Nombre = "En Espera",
+                Codigo = "PEN",
+                Nombre = "Pendiente",
                 Descripcion = "Preinscripción pendiente de revisión",
                 Activo = true,
             },

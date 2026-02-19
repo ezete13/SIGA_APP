@@ -1043,9 +1043,9 @@ namespace SIGA.Persistence.Migrations
                         {
                             Id = 1,
                             Activo = true,
-                            Codigo = "ESP",
+                            Codigo = "PEN",
                             Descripcion = "Preinscripción pendiente de revisión",
-                            Nombre = "En Espera"
+                            Nombre = "Pendiente"
                         },
                         new
                         {

@@ -70,7 +70,7 @@ public class Alumno
     }
 
     // Regla: Transición manual auditada para sanciones
-    public void AplicarSancion(EstadoAlumnoEnum nuevoEstado, string motivo)
+    public void AplicarSancion(EstadoAlumnoEnum nuevoEstado, string? motivo)
     {
         // Guardar motivo en alguna tabla de auditoría o campo de observaciones
         this.AlumnoEstadoId = (int)nuevoEstado;

@@ -1,4 +1,4 @@
-namespace SIGA.Application.Common.Interfaces;
+namespace SIGA.Application.Common.Dispatcher.Interfaces;
 
 public interface IUseCaseHandler<TRequest, TResponse>
     where TRequest : IUseCase<TResponse>

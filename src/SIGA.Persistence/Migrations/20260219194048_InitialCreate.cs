@@ -747,7 +747,7 @@ namespace SIGA.Persistence.Migrations
                 columns: new[] { "id", "activo", "codigo", "descripcion", "nombre" },
                 values: new object[,]
                 {
-                    { 1, true, "ESP", "Preinscripción pendiente de revisión", "En Espera" },
+                    { 1, true, "PEN", "Preinscripción pendiente de revisión", "Pendiente" },
                     { 2, true, "APR", "Preinscripción aprobada y convertida a alumno", "Aprobada" }
                 });
 

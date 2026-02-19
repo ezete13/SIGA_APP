@@ -1,12 +1,12 @@
 using System.Globalization;
 using CsvHelper;
 using SIGA.Application.Interfaces;
-using SIGA.Domain;
+using SIGA.Domain.Common;
 
 namespace SIGA.Infrastructure;
 
 public class ReporteService<T> : IReporteService<T>
-    where T : BaseEntity
+    where T : EntityBase
 {
     public Task<MemoryStream> ObtenerReporteCsv(List<T> records)
     {

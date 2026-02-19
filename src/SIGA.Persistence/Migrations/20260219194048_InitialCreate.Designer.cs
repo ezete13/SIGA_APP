@@ -12,7 +12,7 @@ using SIGA.Persistence;
 namespace SIGA.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260218232832_InitialCreate")]
+    [Migration("20260219194048_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -1046,9 +1046,9 @@ namespace SIGA.Persistence.Migrations
                         {
                             Id = 1,
                             Activo = true,
-                            Codigo = "ESP",
+                            Codigo = "PEN",
                             Descripcion = "Preinscripción pendiente de revisión",
-                            Nombre = "En Espera"
+                            Nombre = "Pendiente"
                         },
                         new
                         {

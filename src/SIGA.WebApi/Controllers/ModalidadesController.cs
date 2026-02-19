@@ -1,19 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
-using SIGA.Application.Common.Interfaces;
+using SIGA.Application.Common.Dispatcher.Interfaces;
 using SIGA.Application.Features.Modalidades;
 using SIGA.Application.Features.Modalidades.CrearModalidad;
 using SIGA.Application.Features.Modalidades.ObtenerReporteCsv;
-using SIGA.Domain.Entities;
+using SIGA.Domain.Entities.Catalog.Dynamic;
 
 namespace SIGA.WebApi.Controllers;
 
 [ApiController]
 [Route("api/modalidades")]
-public class ModalidadesController : ControllerBase
+public class ModalidadController : ControllerBase
 {
     private readonly IUseCaseDispatcher _dispatcher;
 
-    public ModalidadesController(IUseCaseDispatcher dispatcher)
+    public ModalidadController(IUseCaseDispatcher dispatcher)
     {
         _dispatcher = dispatcher;
     }

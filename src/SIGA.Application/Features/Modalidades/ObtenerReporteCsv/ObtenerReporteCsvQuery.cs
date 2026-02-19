@@ -1,4 +1,4 @@
-using SIGA.Application.Common.Interfaces;
+using SIGA.Application.Common.Dispatcher.Interfaces;
 
 namespace SIGA.Application.Features.Modalidades.ObtenerReporteCsv;
 

@@ -2,33 +2,32 @@
 
 El sistema permite la gestión de **Preinscripciones** de aspirantes a través del portal web institucional. Esta entidad actúa como el disparador del proceso de admisión y regula la transición del aspirante hacia la formalización de su inscripción.
 
-### Ciclo de Vida
-
 El estado de una preinscripción determina las acciones permitidas y su relación con otras entidades del sistema:
 
-1. **En Espera:** Toda preinscripción creada desde la página web asume este estado por defecto. En esta etapa, el registro es preventivo y no permite la vinculación de una **Inscripción** formal.
-2. **Aprobada:** Tras la validación de un usuario administrativo, la preinscripción cambia a este estado. Este cambio es el **único habilitador** para que el registro se asocie a una **Inscripción**.
-3. **Revocada:** Un administrativo puede dar por finalizado el proceso negando la solicitud. Una preinscripción en este estado queda inhabilitada para generar inscripciones.
+1. **Pendiente:** Toda preinscripción creada desde la página web asume este estado por defecto. En esta etapa, el registro es preventivo y no permite la vinculación de una **Inscripción** formal.
 
-### Reglas de Negocio
+2. **Aprobada:** Tras la validación de un usuario administrativo, la preinscripción cambia a este estado. Este cambio es el **único habilitador** para que el registro se asocie a una **Inscripción**.
+
+3. **Revocada:** Un administrativo puede dar por finalizado el proceso negando la solicitud. Una preinscripción en este estado queda inhabilitada para generar inscripciones.
 
 Para asegurar la integridad de los datos, se deben aplicar las siguientes validaciones:
 
 * **Validación de Identidad Obligatoria:** No se puede transicionar una preinscripción al estado **"Aprobada"** si el aspirante no está registrado previamente como **Alumno** en el sistema. El administrativo deberá crear o vincular al alumno antes de proceder con la aprobación.
-* **Restricción de Asociación:** Solo las preinscripciones con estado **"Aprobada"** pueden tener una **Inscripción** asociada. El sistema debe bloquear cualquier intento de crear una inscripción si el estado es "En Espera" o "Revocada".
+
+* **Restricción de Asociación:** Solo las preinscripciones con estado **"Aprobada"** pueden tener una **Inscripción** asociada. El sistema debe bloquear cualquier intento de crear una inscripción si el estado es "Pendiente" o "Revocada".
+
 * **Integridad de Datos:** La Preinscripción debe mantener integridad referencial con las entidades de **Alumno**, **Propuesta Académica** y **Estado de Preinscripción**.
+
 * **Disparadores (Triggers):** Al confirmar la transición al estado **"Aprobada"**, el sistema debe:
-1. Vincular permanentemente el `AlumnoId` al registro de Preinscripción.
-2. Ejecutar la migración de datos hacia la entidad **Inscripciones**.
-3. Notificar automáticamente al aspirante sobre su nueva condición.
+    1. Vincular permanentemente el `AlumnoId` al registro de Preinscripción.
+    2. Ejecutar la migración de datos hacia la entidad **Inscripciones**.
+    3. Notificar automáticamente al aspirante sobre su nueva condición.
 
 ---
 
 ## Alumnos
 
 La entidad **Alumno** representa al individuo dentro del ecosistema académico. Su existencia es única y centralizada, permitiendo que un mismo sujeto posea múltiples trayectorias académicas a través de diversas inscripciones.
-
-### Proceso de Conversión (Preinscripción a Alumno)
 
 Cuando una **Preinscripción** transiciona al estado **"Aprobada"**, el sistema debe ejecutar un servicio de automatización de identidad bajo las siguientes reglas:
 
@@ -37,9 +36,8 @@ Cuando una **Preinscripción** transiciona al estado **"Aprobada"**, el sistema 
 * **Si el Alumno ya existe:** Se reutiliza el registro existente, evitando la duplicidad de datos.
 
 2. **Generación de Inscripción:** Independientemente de si el alumno es nuevo o existente, el servicio creará una nueva entidad **Inscripción** vinculando el `AlumnoId` con la `PropuestaId` seleccionada.
-3. **Relación Uno a Muchos:** El sistema debe garantizar que un Alumno pueda estar asociado a múltiples Inscripciones, pero un Alumno nunca debe duplicarse en la base de datos.
 
-### Ciclo de Vida y Estados del Alumno
+3. **Relación Uno a Muchos:** El sistema debe garantizar que un Alumno pueda estar asociado a múltiples Inscripciones, pero un Alumno nunca debe duplicarse en la base de datos.
 
 El estado del alumno regula su capacidad operativa dentro de la institución y depende de su situación académica o administrativa:
 
@@ -47,8 +45,6 @@ El estado del alumno regula su capacidad operativa dentro de la institución y d
 * **Inactivo:** El alumno no posee inscripciones vigentes (por egreso, baja voluntaria o falta de actividad). No posee sanciones, pero tiene restringido el acceso a beneficios de alumno regular hasta que inicie un nuevo proceso.
 * **Suspendido:** Estado de penalización temporal (ej. 6 meses). El alumno mantiene su historial, pero tiene bloqueada la creación de nuevas inscripciones y el cursado por un periodo determinado. Puede retornar al estado **Activo** de forma automática (por fecha) o manual.
 * **Bloqueado:** Estado de veto permanente o por decisión administrativa grave (fraude, documentación apócrifa). El alumno pierde todo derecho a trámites, certificados o nuevas inscripciones.
-
-### Reglas de Negocio y Transiciones
 
 Para mantener el control sobre la matrícula, se aplican las siguientes restricciones de estado:
 
@@ -62,49 +58,11 @@ Para mantener el control sobre la matrícula, se aplican las siguientes restricc
 
 La entidad **Inscripción** formaliza el vínculo entre un **Alumno** y una **Propuesta Académica**. Es el resultado directo de una **Preinscripción Aprobada** y representa la trayectoria activa o histórica del estudiante en la institución.
 
-### Ciclo de Vida de la Inscripción
-
-El estado de una inscripción es determinante para la condición de "Regularidad" del alumno:
-
-1. **Activa:** Representa el cursado vigente. Se genera automáticamente al aprobarse la preinscripción. Solo puede existir una inscripción activa por alumno para una misma propuesta.
-2. **Finalizada:** Estado de cierre de ciclo (por aprobación total o cumplimiento de términos). Este estado es **irreversible**; una vez finalizada, la inscripción no puede retornar al estado Activa.
-3. **Baja:** Cierre prematuro de la inscripción por solicitud del alumno o decisión administrativa. Invalida la cursada actual pero permite futuras preinscripciones a la misma propuesta.
-
-### Reglas de Negocio y Validación
-
-Para garantizar la consistencia del modelo académico, se deben cumplir las siguientes restricciones:
-
-* **Unicidad y Restricción de Duplicidad:** El sistema debe impedir que un alumno se inscriba a una propuesta en la que ya posee una inscripción **Activa** o **Finalizada**.
-* *Excepción:* Solo se permitirá una nueva inscripción a la misma propuesta si la anterior posee estado **Baja**.
-
-
-* **Dependencia de Preinscripción:** No existe inscripción sin preinscripción. Toda **Inscripción** debe mantener una relación obligatoria  con una **Preinscripción** en estado **"Aprobada"**.
-* **Gestión de Finalización:** La transición al estado **Finalizada** puede ejecutarse de dos formas:
-1. **Manual:** Un administrador marca la inscripción como concluida.
-2. **Programada:** El sistema ejecuta un proceso automático basada en una fecha de fin de vigencia preestablecida.
-
-
-* **Impacto en el Estado del Alumno:** Al momento de cambiar una inscripción a **Finalizada** o **Baja**, el sistema debe verificar el resto de las inscripciones del alumno. Si no cuenta con ninguna otra en estado **Activa**, el **Alumno** debe transicionar automáticamente al estado **Inactivo**.
-
----
-
-Claro que sí. He integrado el análisis de irregularidades directamente en el cuerpo del documento, presentándolas como **"Reglas de Validación de Integridad"**. Esto le da un carácter más normativo y técnico al requerimiento, ideal para que un desarrollador o arquitecto de software lo tome como base.
-
----
-
-## Inscripciones
-
-La entidad **Inscripción** formaliza el vínculo entre un **Alumno** y una **Propuesta Académica**. Es el resultado directo de una **Preinscripción Aprobada** y representa la trayectoria activa o histórica del estudiante en la institución.
-
-### Ciclo de Vida de la Inscripción
-
 El estado de una inscripción es determinante para la condición de actividad del alumno:
 
 1. **Activa:** Representa el cursado vigente. Se genera automáticamente al aprobarse la preinscripción.
 2. **Finalizada:** Estado de cierre de ciclo (por aprobación total o cumplimiento de términos). Este estado es **irreversible**.
 3. **Baja:** Cierre prematuro por solicitud del alumno o decisión administrativa. Invalida la cursada actual.
-
-### Reglas de Negocio y Validación
 
 Para garantizar la consistencia del modelo académico, se deben cumplir las siguientes restricciones:
 
@@ -113,37 +71,32 @@ Para garantizar la consistencia del modelo académico, se deben cumplir las sigu
 * **Bloqueo:** No se puede crear una inscripción si el alumno ya tiene una inscripción **Activa** o **Finalizada** para la misma propuesta.
 * **Excepción:** Solo se permitirá una nueva inscripción a la misma propuesta si la anterior posee estado **Baja**.
 
-
 * **Gestión de Finalización:** La transición al estado **Finalizada** puede ser ejecutada por un administrativo o mediante un proceso programado. Una vez en este estado, la inscripción no puede retornar a **Activa**.
 * **Impacto en el Alumno:** Al cambiar una inscripción a **Finalizada** o **Baja**, el sistema debe verificar el resto de las inscripciones del alumno. Si no cuenta con ninguna otra en estado **Activa**, el **Alumno** pasará automáticamente a **Inactivo**.
 
----
-
-### Validación de Irregularidades y Casos de Borde
-
 Para asegurar la robustez del servicio de conversión, se deben contemplar los siguientes escenarios críticos:
 
-#### 1. Conflicto de Identidad y Sanciones Previas
+1. Conflicto de Identidad y Sanciones Previas
 
-Si al intentar crear la inscripción el sistema detecta mediante el DNI que el Alumno ya existe y posee un estado de **Bloqueado** o **Suspendido**:
+    Si al intentar crear la inscripción el sistema detecta mediante el DNI que el Alumno ya existe y posee un estado de **Bloqueado** o **Suspendido**:
 
-* **Acción:** El sistema debe abortar el proceso de inscripción.
-* **Regla:** Un alumno con sanciones vigentes no puede generar nuevas inscripciones aunque su preinscripción web haya sido aprobada inicialmente.
+        * **Acción:** El sistema debe abortar el proceso de inscripción.
+        * **Regla:** Un alumno con sanciones vigentes no puede generar nuevas inscripciones aunque su preinscripción web haya sido aprobada inicialmente.
 
-#### 2. Atomicidad del Proceso de Conversión
+2. Atomicidad del Proceso de Conversión
 
 Existe el riesgo de que la preinscripción cambie a "Aprobada" pero el servicio de creación de Alumno o Inscripción falle.
 
-* **Acción:** La actualización del estado de la Preinscripción, la búsqueda/creación del Alumno y el alta de la Inscripción deben ejecutarse dentro de una **transacción única**. Si falla un paso, se debe realizar un *rollback* completo.
+    * **Acción:** La actualización del estado de la Preinscripción, la búsqueda/creación del Alumno y el alta de la Inscripción deben ejecutarse dentro de una **transacción única**. Si falla un paso, se debe realizar un *rollback* completo.
 
-#### 3. Validación de Vigencia Temporal
+3. Validación de Vigencia Temporal
 
-* **Regla:** El sistema debe impedir que la `Fecha de Finalización` (programada o manual) sea cronológicamente anterior a la `Fecha de Alta` de la inscripción.
+    * **Regla:** El sistema debe impedir que la `Fecha de Finalización` (programada o manual) sea cronológicamente anterior a la `Fecha de Alta` de la inscripción.
 
-#### 4. Reintentos de Inscripción post-Baja
+ 4. Reintentos de Inscripción post-Baja
 
-* **Escenario:** Un alumno con una inscripción previa en estado **Baja** realiza una nueva preinscripción.
-* **Regla:** El sistema debe permitir la nueva inscripción pero está estrictamente prohibido crear un nuevo registro de Alumno. Se debe reutilizar el `AlumnoId` original para mantener la trazabilidad histórica del sujeto.
+    * **Escenario:** Un alumno con una inscripción previa en estado **Baja** realiza una nueva preinscripción.
+    * **Regla:** El sistema debe permitir la nueva inscripción pero está estrictamente prohibido crear un nuevo registro de Alumno. Se debe reutilizar el `AlumnoId` original para mantener la trazabilidad histórica del sujeto.
 
 
 
@@ -176,12 +129,12 @@ Para que una autoridad sea asociada correctamente a un documento (Certificado), 
 
 3. **Consistencia Temporal:** La autoridad debe estar vinculada al **Ciclo Lectivo** correspondiente a la propuesta académica. El sistema solo considerará como firmantes a aquellas autoridades cuyo ciclo lectivo coincida con el del proceso del alumno.
 
-### Reglas de Negocio para Firmas
+Reglas de Negocio para Firmas
 
 * **Atributo de Firma:** Una autoridad solo aparecerá como firmante en los certificados si su atributo `firmaCertificado` está definido como **True**.
 * **Orden de Prelación:** En la sección de parametrización, se puede definir el **Orden de la Firma**, determinando la posición jerárquica en la que aparecerán las rúbricas en el documento final.
 
-### Restricciones de Edición e Integridad
+Restricciones de Edición e Integridad
 
 Para proteger la validez legal de los documentos ya emitidos, se aplican las siguientes restricciones de modificación:
 
@@ -194,8 +147,6 @@ Para proteger la validez legal de los documentos ya emitidos, se aplican las sig
 * **Inalterabilidad Histórica:** Cualquier cambio de autoridad para un nuevo periodo debe gestionarse mediante la creación de un nuevo registro o vinculación, preservando los datos de las autoridades anteriores para consultas históricas.
 
 ---
-
-### Validación de Irregularidades y Casos de Borde
 
 #### 1. Vacancia de Firma
 
@@ -270,156 +221,60 @@ Para asegurar la trazabilidad y la seguridad documental, el sistema implementa l
 ---
 
 
-Propuestas
-Toda propuesta luego de su creación comienza con estado borrador, solo los que tienen
-estado borrador se peuden eliminar, si pasa a archivado, se puede editar algunas porpiedades
-el titulo no se peude actualizar! por que se usa para los certificados.
+Aquí tienes la redacción para el módulo de **Propuestas**, siguiendo la estructura de reglas de negocio, ciclo de vida y casos de borde que venimos utilizando para tu sistema.
 
-por otro lado un administrativo pasa a publicado la propuesta, en este estado la propuesta
-puede cambiar para poder admitir inscripciones y poder visualizar su pagina web publica
-esto se puede activar o desactivar pero si o si su estado debe ser publicada
+---
 
-en archivada, no permite inscripciones ni pagina web y no puede volver a publicarse
-qeudara para siempre en archivada y no se puede modificar. 
+## Propuestas
 
-solo se puede modificar cuando este en publicada pero algunas propiedades, en estado borrador siempre se puede modificar todo, cuando esta en un estado no se puede pasar a otro.
+La entidad **Propuesta** define la oferta académica (cursos, jornadas, carreras) de la institución. Su estado determina no solo su visibilidad pública, sino también la integridad de los documentos legales que de ella dependan.
+
+### Ciclo de Vida de la Propuesta
+
+El flujo de estados es lineal y restrictivo para asegurar la consistencia de los datos históricos:
+
+1. **Borrador:** Es el estado inicial de creación. En esta etapa, el registro es totalmente editable y es el **único estado** que permite la eliminación física del registro en el sistema.
+2. **Publicada:** La propuesta es oficializada por un administrativo.
+* **Admisión:** Solo en este estado se puede activar o desactivar la recepción de **Preinscripciones** y la visibilidad en el portal web institucional.
+* **Restricción de Cambio:** Una propuesta publicada puede volver a editarse bajo limitaciones estrictas, pero no puede retornar al estado Borrador.
+
+
+3. **Archivada:** Cierre definitivo de la propuesta. Una vez archivada, la propuesta **no puede volver a publicarse** ni permite nuevas inscripciones o visualización web. Se mantiene en el sistema exclusivamente para fines históricos y de integridad referencial.
+
+### Reglas de Negocio y Edición
+
+Para proteger la validez de los certificados ya emitidos o en proceso, se aplican las siguientes reglas:
+
+* **Inmutabilidad del Título:** Una vez que la propuesta sale del estado "Borrador", el **Título** no puede ser actualizado bajo ninguna circunstancia, ya que este campo se utiliza de forma literal para la generación de certificados.
+* **Modificación Restringida:** * En **Borrador**, la edición es total.
+* En **Publicada**, solo se pueden editar propiedades accesorias (descripciones, fechas de cursado, imágenes), excluyendo identificadores críticos y el título.
+* En **Archivada**, la edición está totalmente bloqueada; el registro se vuelve de "Solo Lectura".
+
+
+* **Control de Publicación:** La capacidad de admitir inscripciones es un interruptor (*toggle*) que solo reside dentro del estado **Publicada**. Si la propuesta cambia de estado, cualquier proceso de inscripción activo debe ser interrumpido por el sistema.
+
+---
+
+### Validación de Irregularidades y Casos de Borde
+
+#### 1. Intento de Eliminación de Propuestas con Historial
+
+* **Escenario:** Un usuario intenta eliminar una propuesta que ya fue publicada o que tiene alumnos preinscriptos.
+* **Regla:** El sistema debe bloquear la eliminación. Solo se permite el borrado físico si el estado es **Borrador** y no existen registros dependientes (Integridad Referencial).
+
+#### 2. Cambio de Título Crítico
+
+* **Riesgo:** Un administrativo necesita corregir una errata en el título de una propuesta ya publicada.
+* **Solución:** Al estar bloqueado el título por seguridad documental, la solución administrativa debe ser archivar la propuesta errónea y crear una nueva desde cero (Borrador), asegurando que los certificados anteriores no se vean afectados por el cambio.
+
+#### 3. Persistencia de la Página Web
+
+* **Escenario:** Una propuesta pasa de **Publicada** a **Archivada** mientras un aspirante tiene abierta la página de inscripción.
+* **Acción:** El servicio web debe validar el estado de la propuesta en cada interacción. Al detectar el cambio a "Archivada", debe redirigir al usuario o mostrar un mensaje de "Propuesta no disponible", bloqueando el envío del formulario de preinscripción.
+
+---
+
+¿Te gustaría que diseñemos un cuadro comparativo o un **Diagrama de Transición de Estados** para visualizar qué acciones están permitidas en cada etapa de la Propuesta?
 
 
 
-# Migración 
-
-Perfecto, para **Visual Studio Code** usando la terminal integrada, sigue estos pasos:
-
-## Paso 1: Abrir la terminal en VS Code
-- `Ctrl + ñ` o `View → Terminal`
-- Asegúrate de estar en el directorio del proyecto que contiene el DbContext (SIGA.Persistence)
-
-## Paso 2: Verificar que estás en el proyecto correcto
-```bash
-# Verifica que estás en la carpeta correcta
-pwd
-# Debería mostrar algo como: /ruta/a/SIGA.Persistence
-```
-
-## Paso 3: Instalar herramienta dotnet ef (si no la tienes)
-```bash
-dotnet tool install --global dotnet-ef
-```
-
-O actualizarla si ya la tienes:
-```bash
-dotnet tool update --global dotnet-ef
-```
-
-## Paso 4: Crear la migración inicial
-```bash
-dotnet ef migrations add InitialCreate --output-dir Migrations
-```
-
-Si quieres un nombre más descriptivo:
-```bash
-dotnet ef migrations add InitialSchema --output-dir Migrations
-
-```
-
-## Paso 5: Verificar que se creó la migración
-```bash
-# Lista las migraciones existentes
-dotnet ef migrations list
-```
-
-## Paso 6: Aplicar la migración a la base de datos
-```bash
-dotnet ef database update
-```
-
-Si necesitas especificar la cadena de conexión manualmente:
-```bash
-dotnet ef database update --connection "Host=localhost;Database=SIGA_DB;Username=postgres;Password=tu_password"
-```
-
-## Comandos útiles adicionales en terminal
-
-### Ver migraciones pendientes
-```bash
-dotnet ef migrations list
-```
-
-### Revertir a una migración específica
-```bash
-dotnet ef database update NombreMigracionAnterior
-```
-
-### Eliminar la última migración (si no se aplicó)
-```bash
-dotnet ef migrations remove
-```
-
-### Generar script SQL
-```bash
-dotnet ef migrations script -o script.sql
-```
-
-### Ver el contexto y las entidades
-```bash
-dotnet ef dbcontext info
-```
-
-## Paso 7: Verificar en PostgreSQL
-
-Conéctate a PostgreSQL para verificar:
-```bash
-# Si tienes psql instalado
-psql -U postgres -d SIGA_DB -c "\dt siga.*"
-```
-
-O usa un cliente como pgAdmin, DBeaver, etc.
-
-## Solución de problemas comunes en VS Code
-
-### Error: "No se encontró ninguna instalación de dotnet-ef"
-```bash
-dotnet tool install --global dotnet-ef
-# Cierra y vuelve a abrir la terminal
-```
-
-### Error: "No se pudo encontrar el proyecto"
-Asegúrate de estar en la carpeta correcta:
-```bash
-cd src/SIGA.Persistence  # o la ruta donde está tu proyecto
-```
-
-### Error de cadena de conexión
-Si no tienes configurada la cadena en appsettings.json, puedes pasarla directamente:
-```bash
-dotnet ef database update --connection "Host=localhost;Database=SIGA_DB;Username=postgres;Password=123456"
-```
-
-### Error de permisos en PostgreSQL
-```bash
-# Conéctate a PostgreSQL y crea la base de datos si no existe
-psql -U postgres
-CREATE DATABASE SIGA_DB;
-\q
-```
-
-## Resumen de comandos en orden
-
-```bash
-# 1. Ir al proyecto correcto
-cd SIGA.Persistence
-
-# 2. Instalar/actualizar dotnet-ef (si es necesario)
-dotnet tool install --global dotnet-ef
-
-# 3. Crear migración
-dotnet ef migrations add InitialCreate --output-dir Migrations
-
-# 4. Aplicar migración
-dotnet ef database update
-
-# 5. Verificar
-dotnet ef migrations list
-```
-
-¡Y eso es todo! La migración debería crear todas las tablas en PostgreSQL con el esquema `siga`.

@@ -1,4 +1,4 @@
-namespace SIGA.Application.Common.Interfaces;
+namespace SIGA.Application.Common.Dispatcher.Interfaces;
 
 public interface IUseCaseDispatcher
 {

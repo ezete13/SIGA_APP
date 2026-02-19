@@ -1,9 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
-using SIGA.Application.Common;
-using SIGA.Application.Common.Interfaces;
+using SIGA.Application.Common.Dispatcher;
+using SIGA.Application.Common.Dispatcher.Interfaces;
 using SIGA.Application.Features.Modalidades.CrearModalidad;
 using SIGA.Application.Features.Modalidades.ObtenerReporteCsv;
-using SIGA.Domain.Entities;
+using SIGA.Domain.Entities.Catalog.Dynamic;
 
 namespace SIGA.Application;
 

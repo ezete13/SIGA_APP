@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
-using SIGA.Application.Common.Interfaces;
+using SIGA.Application.Common.Dispatcher.Interfaces;
 
-namespace SIGA.Application.Common;
+namespace SIGA.Application.Common.Dispatcher;
 
 public class UseCaseDispatcher : IUseCaseDispatcher
 {

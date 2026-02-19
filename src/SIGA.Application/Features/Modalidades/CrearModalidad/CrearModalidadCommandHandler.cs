@@ -1,5 +1,5 @@
-using SIGA.Application.Common.Interfaces;
-using SIGA.Domain.Entities;
+using SIGA.Application.Common.Dispatcher.Interfaces;
+using SIGA.Domain.Entities.Catalog.Dynamic;
 using SIGA.Persistence;
 
 namespace SIGA.Application.Features.Modalidades.CrearModalidad;
