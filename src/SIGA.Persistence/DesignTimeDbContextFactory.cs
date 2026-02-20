@@ -9,7 +9,7 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<Applicatio
     {
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
 
-        // ⚠️ IMPORTANTE: Cambia esta cadena por la de tu base de datos PostgreSQL
+        // ⚠️ IMPORTANTE
         optionsBuilder.UseNpgsql(
             "Host=127.0.0.1;Database=db_siga;Username=developer;Password=3z3Qu!3l_1994"
         );
