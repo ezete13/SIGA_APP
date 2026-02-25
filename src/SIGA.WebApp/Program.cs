@@ -1,5 +1,7 @@
 using MudBlazor.Services;
-using SIGA.WebApp.Components;
+using SIGA.WebApp;
+using SIGA.WebApp.Features.Propuestas.CrearPropuestaBorrador.Service;
+using SIGA.WebApp.Shared.UnidadSelector.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,7 +10,14 @@ builder.Services.AddMudServices();
 
 // Add services to the container.
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
-
+builder.Services.AddHttpClient<CrearPropuestaBorradorService>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5227");
+});
+builder.Services.AddHttpClient<UnidadSelectorService>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5227");
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -1,0 +1,188 @@
+@page "/crear-propuesta"
+@using SIGA.WebApp.Features.Propuestas.CrearPropuestaBorrador.Models
+@using SIGA.WebApp.Features.Propuestas.CrearPropuestaBorrador.Service
+@using SIGA.WebApp.Shared.UnidadSelector.Models
+@using SIGA.WebApp.Shared.UnidadSelector.Services
+@inject CrearPropuestaBorradorService CrearPropuestaBorradorService
+@inject UnidadSelectorService UnidadSelectorService
+
+
+
+<MudPaper Class="pa-6 mx-auto mt-6" MaxWidth="800px" Elevation="4">
+
+    <MudText Typo="Typo.h5" Class="mb-4">
+        Crear Propuesta
+    </MudText>
+
+
+    <EditForm Model="_model" OnValidSubmit="Crear">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <MudGrid>
+
+            <MudItem xs="12">
+                <MudTextField @bind-Value="_model.Titulo" Label="Título" Variant="Variant.Outlined" Required="true"
+                              Margin="Margin.Dense" />
+            </MudItem>
+
+            <MudItem xs="12">
+                <MudSelect T="int" Label="Unidad" @bind-Value="_model.UnidadId" Variant="Variant.Outlined"
+                           Margin="Margin.Dense">
+
+                    <MudSelectItem Value=0>
+                        Seleccionar
+                    </MudSelectItem>
+
+                    @foreach (var unidad in _unidades)
+                    {
+                        <MudSelectItem Value="@unidad.Id">
+                            @unidad.Nombre
+                        </MudSelectItem>
+                    }
+
+                </MudSelect>
+            </MudItem>
+
+            <MudItem xs="6" md="4">
+                <MudDatePicker @bind-Date="_fechaInicio" Label="Fecha Inicio" Variant="Variant.Outlined"
+                               Margin="Margin.Dense" />
+            </MudItem>
+
+            <MudItem xs="6" md="4">
+                <MudDatePicker @bind-Date="_fechaFin" Label="Fecha Fin" Variant="Variant.Outlined"
+                               Margin="Margin.Dense" />
+            </MudItem>
+
+
+            <MudItem xs="6" md="4">
+                <MudTextField @bind-Value="_model.Anio" Label="Año" Variant="Variant.Outlined" Margin="Margin.Dense" />
+            </MudItem>
+
+
+            <MudItem xs="6" md="4">
+                <MudNumericField T="int" @bind-Value="_model.ModalidadId" Label="Modalidad" Variant="Variant.Outlined"
+                                 Margin="Margin.Dense" />
+            </MudItem>
+
+            <MudItem xs="6" md="4">
+                <MudNumericField T="int" @bind-Value="_model.MaximoAlumnos" Label="Máximo Alumnos"
+                                 Variant="Variant.Outlined" Margin="Margin.Dense" />
+            </MudItem>
+
+
+            <MudItem xs="6" md="4">
+                <MudNumericField T="int" @bind-Value="_model.CantidadHoras" Label="Cantidad Horas"
+                                 Variant="Variant.Outlined" Margin="Margin.Dense" />
+            </MudItem>
+
+
+            <MudItem xs="12" md="6">
+                <MudNumericField T="decimal?" @bind-Value="_model.ImporteBase" Label="Importe Base"
+                                 Variant="Variant.Outlined" Margin="Margin.Dense" />
+            </MudItem>
+
+            <MudItem xs="12" md="6">
+                <MudTextField @bind-Value="_model.EmailEncargado" Label="Email Encargado" Variant="Variant.Outlined"
+                              Margin="Margin.Dense" />
+            </MudItem>
+
+            <MudItem xs="12">
+                <MudTextField @bind-Value="_model.LugarRealizacion" Label="Lugar de Realización"
+                              Variant="Variant.Outlined" Margin="Margin.Dense" />
+            </MudItem>
+
+            <MudItem xs="12">
+                <MudTextField @bind-Value="_model.ContactoInfo" Label="Información de Contacto"
+                              Variant="Variant.Outlined" Lines="3" Margin="Margin.Dense" />
+            </MudItem>
+
+            <MudItem xs="12">
+                <MudTextField @bind-Value="_model.PagosInfo" Label="Información de Pagos" Variant="Variant.Outlined"
+                              Lines="3" Margin="Margin.Dense" />
+            </MudItem>
+
+            <MudItem xs="12" md="6">
+                <MudSwitch T="bool" @bind-Checked="_model.WebVisible" Color="Color.Primary"
+                           Label="Habilitar sitio web" />
+            </MudItem>
+
+            <MudItem xs="12" md="6">
+                <MudSwitch T="bool" @bind-Checked="_model.PermiteInscripcionesWeb" Color="Color.Primary"
+                           Label="Habilitar inscripciones" />
+            </MudItem>
+
+            <MudItem xs="12" Class="mt-4">
+
+                <MudButton Type="Submit" Variant="Variant.Filled" Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.Save">
+                    Crear Borrador
+                </MudButton>
+
+                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Class="ml-2" OnClick="Limpiar">
+                    Limpiar
+                </MudButton>
+
+            </MudItem>
+
+        </MudGrid>
+
+    </EditForm>
+
+    @if (_mensaje is not null)
+    {
+        <MudAlert Severity="Severity.Success" Class="mt-4">
+            @_mensaje
+        </MudAlert>
+    }
+
+</MudPaper>
+
+@code {
+
+    public string ReadOnly { get; set; } = "Can't change me";
+
+    private List<UnidadSelectorResponse> _unidades = new();
+    //private List<LookupDto> _modalidades = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _unidades = await UnidadSelectorService.GetUnidadesAsync();
+        //_modalidades = await PropuestaService.GetModalidadesAsync();
+    }
+
+    private CrearPropuestaBorradorRequest _model = new();
+
+    private DateTime? _fechaInicio;
+    private DateTime? _fechaFin;
+
+    private string? _mensaje;
+
+    private async Task Crear()
+    {
+        if (_fechaInicio.HasValue)
+            _model.FechaInicio = DateOnly.FromDateTime(_fechaInicio.Value);
+
+        if (_fechaFin.HasValue)
+            _model.FechaFin = DateOnly.FromDateTime(_fechaFin.Value);
+
+        var id = await CrearPropuestaBorradorService.CrearPropuestaBorradorAsync(_model);
+
+        if (id is not null)
+        {
+            _mensaje = $"Propuesta creada con ID {id}";
+            Limpiar();
+        }
+        else
+        {
+            _mensaje = "Error al crear la propuesta";
+        }
+    }
+
+    private void Limpiar()
+    {
+        _model = new();
+        _fechaInicio = null;
+        _fechaFin = null;
+    }
+}
