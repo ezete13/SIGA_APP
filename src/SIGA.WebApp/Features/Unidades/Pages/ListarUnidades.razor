@@ -1,0 +1,87 @@
+﻿@page "/unidades"
+@using SIGA.WebApp.Features.Unidades.Models
+@inject UnidadService UnidadService
+
+<MudPaper Class="pa-4">
+
+    <MudText Typo="Typo.h6" Class="mb-4">
+        Listado de Unidades
+    </MudText>
+
+    <MudTable Items="_unidades"              Hover="true"              Dense="true"              Bordered="true"              Striped="true">
+
+        <HeaderContent>
+            <MudTh>Id</MudTh>
+            <MudTh>Código</MudTh>
+            <MudTh>Nombre</MudTh>
+            <MudTh>Nombre Corto</MudTh>
+            <MudTh>Siglas</MudTh>
+            <MudTh>Descripción</MudTh>
+            <MudTh>Activo</MudTh>
+            <MudTh>Dirección</MudTh>
+            <MudTh>Teléfono</MudTh>
+            <MudTh>Email</MudTh>
+            <MudTh>Color Principal</MudTh>
+            <MudTh>Color Secundario</MudTh>
+        </HeaderContent>
+
+        <RowTemplate>
+            <MudTd DataLabel="Id">@context.Id</MudTd>
+            <MudTd DataLabel="Código">@context.Codigo</MudTd>
+            <MudTd DataLabel="Nombre">@context.Nombre</MudTd>
+            <MudTd DataLabel="Nombre Corto">@context.NombreCorto</MudTd>
+            <MudTd DataLabel="Siglas">@context.Siglas</MudTd>
+            <MudTd DataLabel="Descripción">@context.Descripcion</MudTd>
+
+            <MudTd DataLabel="Activo">
+                <MudChip T="string"             Color="@(context.Activo? Color.Success: Color.Error)" Variant="Variant.Filled"
+                         Size="Size.Small">
+                    @(context.Activo ? "Sí" : "No")
+                </MudChip>
+            </MudTd>
+
+            <MudTd DataLabel="Dirección">@context.Direccion</MudTd>
+            <MudTd DataLabel="Teléfono">@context.Telefono</MudTd>
+            <MudTd DataLabel="Email">@context.Email</MudTd>
+
+            <MudTd DataLabel="Color Principal">
+                @if (!string.IsNullOrWhiteSpace(context.ColorPrincipal))
+                {
+                    <div style="width:20px;height:20px;border-radius:4px;
+                        background-color:@context.ColorPrincipal">
+                    </div>
+                }
+            </MudTd>
+
+            <MudTd DataLabel="Color Secundario">
+                @if (!string.IsNullOrWhiteSpace(context.ColorSecundario))
+                {
+                    <div style="width:20px;height:20px;border-radius:4px;
+                        background-color:@context.ColorSecundario">
+                    </div>
+                }
+            </MudTd>
+
+        </RowTemplate>
+
+        <NoRecordsContent>
+            <MudText>No hay unidades registradas.</MudText>
+        </NoRecordsContent>
+
+    </MudTable>
+
+</MudPaper>
+
+@code {
+
+    public string ReadOnly { get; set; } = "Can't change me";
+
+    private List<UnidadDetalleResponse> _unidades = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _unidades = await UnidadService.GetUnidadesDetalleAsync();
+    }
+
+
+}

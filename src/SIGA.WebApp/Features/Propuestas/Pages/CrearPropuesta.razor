@@ -1,10 +1,11 @@
 @page "/crear-propuesta"
 @using SIGA.WebApp.Features.Propuestas.CrearPropuestaBorrador.Models
 @using SIGA.WebApp.Features.Propuestas.CrearPropuestaBorrador.Service
-@using SIGA.WebApp.Shared.UnidadSelector.Models
-@using SIGA.WebApp.Shared.UnidadSelector.Services
+@using SIGA.WebApp.Features.Unidades
+@using SIGA.WebApp.Features.Unidades.Models
+
 @inject CrearPropuestaBorradorService CrearPropuestaBorradorService
-@inject UnidadSelectorService UnidadSelectorService
+@inject UnidadService UnidadService
 
 
 
@@ -142,12 +143,12 @@
 
     public string ReadOnly { get; set; } = "Can't change me";
 
-    private List<UnidadSelectorResponse> _unidades = new();
+    private List<UnidadResponse> _unidades = new();
     //private List<LookupDto> _modalidades = new();
 
     protected override async Task OnInitializedAsync()
     {
-        _unidades = await UnidadSelectorService.GetUnidadesAsync();
+        _unidades = await UnidadService.GetUnidadesAsync();
         //_modalidades = await PropuestaService.GetModalidadesAsync();
     }
 

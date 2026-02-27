@@ -14,5 +14,6 @@
   <ItemGroup>
     <ProjectReference Include="..\SIGA.Application\SIGA.Application.csproj" />
     <ProjectReference Include="..\SIGA.Infrastructure\SIGA.Infrastructure.csproj" />
+    <ProjectReference Include="..\SIGA.Shared\SIGA.Shared.csproj" />
   </ItemGroup>
 </Project>

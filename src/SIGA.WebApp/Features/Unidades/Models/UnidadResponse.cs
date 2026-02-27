@@ -1,6 +1,6 @@
-namespace SIGA.WebApp.Shared.UnidadSelector.Models;
+namespace SIGA.WebApp.Features.Unidades.Models;
 
-public class UnidadSelectorResponse
+public class UnidadResponse
 {
     public int Id { get; set; }
     public string Nombre { get; set; } = string.Empty;
