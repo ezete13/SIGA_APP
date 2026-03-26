@@ -12,8 +12,8 @@ using SIGA.Persistence;
 namespace SIGA.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260219194048_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260325232200_InitialSchema")]
+    partial class InitialSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

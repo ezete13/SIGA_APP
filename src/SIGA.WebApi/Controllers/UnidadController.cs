@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using SIGA.Application.Common;
 using SIGA.Application.Common.Dispatcher.Interfaces;
+using SIGA.Application.Features.Unidades.CrearUnidad;
 using SIGA.Application.Features.Unidades.ObtenerUnidades;
 using SIGA.Domain.Entities.Catalog.Dynamic;
 
@@ -14,6 +16,31 @@ public class UnidadController : ControllerBase
     public UnidadController(IUseCaseDispatcher dispatcher)
     {
         _dispatcher = dispatcher;
+    }
+
+    [HttpPost("create")]
+    public async Task<ActionResult<AppResult<Unidad>>> CrearUnidad(
+        [FromForm] Unidad request,
+        CancellationToken cancellationToken
+    )
+    {
+        // throw new Exception("Esta excepcion es forzada solo por prueba");
+        var command = new CrearUnidadCommand(
+            request.Codigo,
+            request.Nombre,
+            request.Descripcion,
+            request.NombreCorto,
+            request.Siglas,
+            request.ColorPrincipal,
+            request.ColorSecundario,
+            request.Direccion,
+            request.Telefono,
+            request.Email
+        );
+        return await _dispatcher.Send<CrearUnidadCommand, AppResult<Unidad>>(
+            command,
+            cancellationToken
+        );
     }
 
     // GET /api/unidades

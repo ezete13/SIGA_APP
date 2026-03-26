@@ -84,6 +84,7 @@ public partial class Propuesta
 
     public virtual ICollection<Temario> PropuestaContenidos { get; set; } = new List<Temario>();
 
+    //==> Crear Propuesta
     public static Propuesta Crear(
         int unidadId,
         int tipoPropuestaId,
@@ -110,7 +111,6 @@ public partial class Propuesta
         bool permiteInscripcionesWeb = false
     )
     {
-        // Validaciones básicas
         if (string.IsNullOrWhiteSpace(titulo))
             throw new DomainException("El título es requerido");
 
@@ -152,14 +152,10 @@ public partial class Propuesta
             Estado = true,
             CreadoEn = DateTime.UtcNow,
             ActualizadoEn = DateTime.UtcNow,
-            Preinscripciones = new List<Preinscripcion>(),
-            Inscripciones = new List<Inscripcion>(),
-            PropuestaDocentes = new List<PropuestaDocente>(),
-            PropuestaContenidos = new List<Temario>(),
         };
     }
 
-    // Método para actualizar una propuesta (considerando el estado)
+    //==> Actualizar Propuesta
     public void Actualizar(
         string titulo,
         DateOnly fechaInicio,
@@ -183,7 +179,6 @@ public partial class Propuesta
         int? edicion = null
     )
     {
-        // Verificar si está en estado borrador
         if (PropuestaEstado?.Codigo != "BORRADOR")
             throw new InvalidOperationException(
                 "Solo se pueden modificar propuestas en estado borrador"
@@ -249,7 +244,7 @@ public partial class Propuesta
         ActualizadoEn = DateTime.UtcNow;
     }
 
-    // Método para publicar una propuesta
+    //==> Publicar Propuesta
     public void Publicar()
     {
         if (PropuestaEstado?.Codigo != "BORRADOR")
@@ -268,29 +263,26 @@ public partial class Propuesta
                 "Debe especificar el concepto de pago si la propuesta tiene un importe base"
             );
 
-        // Cambiar estado a publicado (asumiendo que el ID de publicado es 2 o el que corresponda)
-        // Nota: Deberías obtener el ID correcto según tu catálogo
         EstadoPropuestaId = 2; // Publicado
         ActualizadoEn = DateTime.UtcNow;
     }
 
-    // Método para archivar una propuesta
+    //==> Archivar Propuesta
     public void Archivar()
     {
         if (PropuestaEstado?.Codigo == "ARCHIVADO")
             throw new InvalidOperationException("La propuesta ya está archivada");
 
-        // Cambiar estado a archivado (asumiendo que el ID de archivado es 3 o el que corresponda)
-        EstadoPropuestaId = 3; // Archivado
-        WebVisible = false; // Al archivar, desactivar visibilidad web
-        PermiteInscripcionesWeb = false; // Desactivar inscripciones web
+        EstadoPropuestaId = 3;
+        WebVisible = false;
+        PermiteInscripcionesWeb = false;
         ActualizadoEn = DateTime.UtcNow;
     }
 
-    // Método para activar/desactivar visibilidad web (solo si no está archivada)
+    //==> Activar/Desactivar Web
     public void SetWebVisible(bool visible)
     {
-        if (PropuestaEstado?.Codigo == "ARCHIVADO")
+        if (PropuestaEstado?.Codigo == "ARCHIVADO" || PropuestaEstado?.Codigo == "BORRADOR")
             throw new InvalidOperationException(
                 "No se puede activar el sitio web de una propuesta archivada"
             );
@@ -299,19 +291,19 @@ public partial class Propuesta
         ActualizadoEn = DateTime.UtcNow;
     }
 
-    // Método para activar/desactivar inscripciones web (solo si no está archivada)
+    //==> Activar/Desactivar Inscripciones
     public void SetPermiteInscripcionesWeb(bool permite)
     {
-        if (PropuestaEstado?.Codigo == "ARCHIVADO")
+        if (PropuestaEstado?.Codigo == "ARCHIVADO" || PropuestaEstado?.Codigo == "BORRADOR")
             throw new InvalidOperationException(
-                "No se pueden activar las inscripciones web de una propuesta archivada"
+                "No se pueden activar las inscripciones web de una propuesta archivada o borrador"
             );
 
         PermiteInscripcionesWeb = permite;
         ActualizadoEn = DateTime.UtcNow;
     }
 
-    // Método para inscribir un alumno (reducir cupos disponibles)
+    //==> Nueva isncripcion & Reducir cupos
     public bool InscribirAlumno()
     {
         if (PropuestaEstado?.Codigo != "PUBLICADO")
@@ -330,7 +322,7 @@ public partial class Propuesta
         return true;
     }
 
-    // Método para cancelar una inscripción (aumentar cupos disponibles)
+    //==> Cancelar inscripción & Aumentar cupos
     public void CancelarInscripcion()
     {
         if (CuposDisponibles < MaximoAlumnos)

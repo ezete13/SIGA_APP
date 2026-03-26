@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace SIGA.Persistence;
 
-public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
+public class DbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
 {
     public ApplicationDbContext CreateDbContext(string[] args)
     {

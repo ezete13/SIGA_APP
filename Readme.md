@@ -205,3 +205,7 @@ dotnet ef migrations list
 ```
 
 ¡Y eso es todo! La migración debería crear todas las tablas en PostgreSQL con el esquema `siga`.
+
+
+
+add-migration "Startup" -c "ApplicationDbContext" -outputdir "Identity/Migrations"
